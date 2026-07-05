@@ -31,5 +31,16 @@
     "shares": 125,
     "price": 2390,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 1,
+    "date": "2026-06-22",
+    "action": "buy",
+    "ticker": "2308",
+    "name": "台達電",
+    "shares": 70,
+    "price": 2150,
+    "note": ""
   }
 ]
