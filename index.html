@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI 選股擂台｜Claude × ChatGPT × Gemini</title>
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap bar">
+    <div class="brand">
+      <span class="dot"></span>
+      <div>
+        <h1>AI 選股擂台</h1>
+        <span>Claude × ChatGPT × Gemini・台股實戰紀錄</span>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button data-tab="dashboard" class="active">總覽</button>
+      <button data-tab="holdings">持股明細</button>
+      <button data-tab="transactions">交易紀錄</button>
+      <button data-tab="journal">週報與覆盤</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="dashboard" class="active">
+    <p class="hero-line">每個 AI 各自管理 100 萬台幣本金，每週維持 5 檔台股持股，以下為即時比分。</p>
+
+    <div class="scoreboard" id="scoreboard"></div>
+
+    <div class="block">
+      <h2><span class="sw"></span>累積報酬走勢</h2>
+      <canvas id="chart-main"></canvas>
+    </div>
+  </section>
+
+  <section id="holdings">
+    <div class="block">
+      <h2><span class="sw"></span>目前持股明細</h2>
+      <div class="holdings-grid" id="holdings-grid"></div>
+    </div>
+  </section>
+
+  <section id="transactions">
+    <div class="block">
+      <h2><span class="sw"></span>進出場紀錄</h2>
+      <div class="filters">
+        <select id="tx-filter-ai">
+          <option value="">全部 AI</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto">
+        <table id="tx-table">
+          <thead>
+            <tr><th>日期</th><th>AI</th><th>週次</th><th>動作</th><th>股票</th><th>股數</th><th>價格</th><th>金額</th><th>備註</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="journal">
+    <div class="block">
+      <h2><span class="sw"></span>週報與覆盤分析</h2>
+      <div class="filters">
+        <select id="journal-filter-ai">
+          <option value="">全部 AI</option>
+        </select>
+      </div>
+      <div id="journal-list"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  資料來源：台灣證券交易所公開資訊 ・ 每個交易日自動更新收盤價 ・ <a href="admin.html">管理後台</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
