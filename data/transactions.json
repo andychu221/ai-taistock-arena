@@ -64,5 +64,16 @@
     "shares": 70,
     "price": 2000,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 2,
+    "date": "2026-06-29",
+    "action": "buy",
+    "ticker": "3037",
+    "name": "欣興",
+    "shares": 50,
+    "price": 950,
+    "note": ""
   }
 ]
