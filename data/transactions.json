@@ -9,5 +9,16 @@
     "shares": 672,
     "price": 372,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 1,
+    "date": "2026-06-22",
+    "action": "buy",
+    "ticker": "3017",
+    "name": "奇鋐",
+    "shares": 85,
+    "price": 2350,
+    "note": ""
   }
 ]
