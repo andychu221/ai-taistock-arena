@@ -6,5 +6,10 @@
   ],
   "initial_capital": 1000000,
   "start_date": "2026-06-22",
-  "currency": "TWD"
+  "currency": "TWD",
+  "buy_fee_rate": 0.001425,
+  "sell_fee_rate": 0.001425,
+  "sell_tax_rate": 0.003,
+  "benchmark_ticker": "0050",
+  "benchmark_name": "元大台灣50"
 }
