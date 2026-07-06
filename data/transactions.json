@@ -185,5 +185,16 @@
     "shares": 125,
     "price": 2390,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 1,
+    "date": "2026-06-24",
+    "action": "buy",
+    "ticker": "3017",
+    "name": "奇鋐",
+    "shares": 104,
+    "price": 2400,
+    "note": ""
   }
 ]
