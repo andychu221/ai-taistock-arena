@@ -101,6 +101,7 @@ function buildDateAxis(prices, startDate) {
 }
 
 let scoreboardCharts = [];
+let mainChart = null; // 記錄主圖表實例
 
 (async function init() {
   setupTabs();
@@ -213,11 +214,15 @@ function renderChart(config, dates, seriesByAI, bmSeries) {
   const ctx = document.getElementById('chart-main');
   if (typeof Chart === 'undefined') return;
 
+  // 清除舊的圖表實例，避免重複渲染出錯
+  if (mainChart) mainChart.destroy();
+
   const datasets = config.ais.map(ai => ({
     label: ai.name,
     data: seriesByAI[ai.id].map(p => (((p.value - config.initial_capital) / config.initial_capital) * 100).toFixed(2)),
     borderColor: ai.color,
-    backgroundColor: ai.color + '22',
+    // 【修復語法錯誤】移除 ai.color + '22' 的 8 碼 Hex 色碼，改用標準實色，相容所有 Safari/Webkit 瀏覽器
+    backgroundColor: ai.color, 
     borderWidth: 2,
     pointRadius: 0, tension: 0.25,
   }));
@@ -233,7 +238,7 @@ function renderChart(config, dates, seriesByAI, bmSeries) {
     });
   }
 
-  new Chart(ctx, {
+  mainChart = new Chart(ctx, {
     type: 'line', data: { labels: dates, datasets },
     options: {
       responsive: true,
@@ -509,6 +514,7 @@ function renderJournal(config, journal) {
 
   function draw() {
     const filter = select.value;
+    // 預設將日期排序由新到舊 (Descending)
     const rows = journal.filter(j => !filter || j.ai === filter).sort((a, b) => b.date.localeCompare(a.date)).reverse();
     if (rows.length === 0) {
       list.innerHTML = `<div class="empty"><b>還沒有週報</b></div>`;
@@ -522,6 +528,7 @@ function renderJournal(config, journal) {
         
       const aiInfo = config.ais.find(x => x.id === j.ai);
       
+      // 這裡不加上 open 屬性，確保預設是折疊狀態
       return `<details class="journal-week">
         <summary>
           <span class="weeknum">第 ${j.week} 週</span>
