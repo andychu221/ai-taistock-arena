@@ -42,7 +42,6 @@
   <section id="holdings">
     <div class="block">
       <h2><span class="sw"></span>目前持股分佈</h2>
-      <!-- 這裡的內容會由 js 動態插入 (含切換週次選單與圓餅/長條圖) -->
       <div id="holdings-container"></div>
     </div>
   </section>
@@ -51,14 +50,30 @@
     <div class="block">
       <h2><span class="sw"></span>進出場紀錄</h2>
       <div class="filters">
-        <select id="tx-filter-ai">
-          <option value="">全部 AI</option>
+        <select id="tx-filter-ai"><option value="">全部 AI</option></select>
+        <select id="tx-filter-action">
+          <option value="">全部動作</option>
+          <option value="buy">買進</option>
+          <option value="sell">賣出</option>
         </select>
+        <input type="text" id="tx-filter-ticker" placeholder="搜尋股票代號或名稱...">
       </div>
       <div style="overflow-x:auto">
         <table id="tx-table">
           <thead>
-            <tr><th>日期</th><th>AI</th><th>週次</th><th>動作</th><th>股票</th><th>股數</th><th>價格</th><th>總金額</th><th>手續費</th><th>稅金</th><th>淨損益</th></tr>
+            <tr>
+              <th class="sortable" data-sort="date">日期 <span class="sort-icon">▼</span></th>
+              <th class="sortable" data-sort="ai">AI <span class="sort-icon">▼</span></th>
+              <th class="sortable" data-sort="week">週次 <span class="sort-icon">▼</span></th>
+              <th class="sortable" data-sort="action">動作 <span class="sort-icon">▼</span></th>
+              <th class="sortable" data-sort="ticker">股票 <span class="sort-icon">▼</span></th>
+              <th class="sortable" data-sort="shares">股數 <span class="sort-icon">▼</span></th>
+              <th class="sortable" data-sort="price">價格 <span class="sort-icon">▼</span></th>
+              <th class="sortable" data-sort="amount">總金額 <span class="sort-icon">▼</span></th>
+              <th>手續費</th>
+              <th>稅金</th>
+              <th class="sortable" data-sort="netPl">淨損益 <span class="sort-icon">▼</span></th>
+            </tr>
           </thead>
           <tbody></tbody>
         </table>
