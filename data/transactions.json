@@ -97,5 +97,16 @@
     "shares": 305,
     "price": 360,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 1,
+    "date": "2026-06-22",
+    "action": "buy",
+    "ticker": "2330",
+    "name": "台積電",
+    "shares": 125,
+    "price": 2390,
+    "note": ""
   }
 ]
