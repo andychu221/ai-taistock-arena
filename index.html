@@ -41,8 +41,9 @@
 
   <section id="holdings">
     <div class="block">
-      <h2><span class="sw"></span>目前持股明細</h2>
-      <div class="holdings-grid" id="holdings-grid"></div>
+      <h2><span class="sw"></span>目前持股分佈</h2>
+      <!-- 這裡的內容會由 js 動態插入 (含切換週次選單與圓餅/長條圖) -->
+      <div id="holdings-container"></div>
     </div>
   </section>
 
@@ -57,7 +58,7 @@
       <div style="overflow-x:auto">
         <table id="tx-table">
           <thead>
-            <tr><th>日期</th><th>AI</th><th>週次</th><th>動作</th><th>股票</th><th>股數</th><th>價格</th><th>金額</th><th>備註</th></tr>
+            <tr><th>日期</th><th>AI</th><th>週次</th><th>動作</th><th>股票</th><th>股數</th><th>價格</th><th>總金額</th><th>手續費</th><th>稅金</th><th>淨損益</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -80,7 +81,7 @@
 </main>
 
 <footer class="site">
-  資料來源：台灣證券交易所公開資訊 ・ 每個交易日自動更新收盤價 ・ <a href="admin.html">管理後台</a>
+  資料來源：Yahoo Finance 歷史股價資料庫 ・ 每個交易日自動更新收盤價 ・ <a href="admin.html">管理後台</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
