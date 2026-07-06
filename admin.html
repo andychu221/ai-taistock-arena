@@ -69,10 +69,13 @@
         <label>競賽起始日 <input id="cfg-start-date" type="date" required></label>
       </div>
       <div class="row2">
-        <label>買進手續費率(例如 0.001425 = 0.1425%) <input id="cfg-buy-fee" type="number" step="0.0001" min="0" required></label>
-        <label>賣出手續費率 <input id="cfg-sell-fee" type="number" step="0.0001" min="0" required></label>
+        <label>大盤基準代號 <input id="cfg-benchmark" placeholder="例如 0050" required></label>
       </div>
-      <label>證券交易稅率(賣出時課徵，一般為 0.003) <input id="cfg-sell-tax" type="number" step="0.0001" min="0" required></label>
+      <div class="row2">
+        <label>買進手續費率(例如 0.001425) <input id="cfg-buy-fee" type="number" step="0.000001" min="0" required></label>
+        <label>賣出手續費率 <input id="cfg-sell-fee" type="number" step="0.000001" min="0" required></label>
+      </div>
+      <label>證券交易稅率(一般為 0.003) <input id="cfg-sell-tax" type="number" step="0.000001" min="0" required></label>
       <div>
         <button type="submit" class="btn primary">更新設定</button>
         <span id="config-status" class="status"></span>
@@ -104,7 +107,7 @@
         </label>
       </div>
       <div class="row2">
-        <label>股票代號 <input id="tx-ticker" placeholder="例如 2330" required></label>
+        <label>股票代號 (輸入後自動帶入名稱) <input id="tx-ticker" placeholder="例如 2330" required></label>
         <label>股票名稱 <input id="tx-name" placeholder="例如 台積電"></label>
       </div>
       <div class="row2">
@@ -123,6 +126,11 @@
 
   <div class="block">
     <h2><span class="sw"></span>交易紀錄管理</h2>
+    <div class="filters">
+      <select id="tx-manage-filter">
+        <option value="">全部 AI</option>
+      </select>
+    </div>
     <div style="overflow-x:auto">
       <table id="tx-manage-table">
         <thead><tr><th>日期</th><th>AI</th><th>週次</th><th>動作</th><th>股票</th><th>股數</th><th>價格</th><th></th></tr></thead>
@@ -160,12 +168,16 @@
 
   <div class="block">
     <h2><span class="sw"></span>週報管理</h2>
+    <div class="filters">
+      <select id="journal-manage-filter">
+        <option value="">全部 AI</option>
+      </select>
+    </div>
     <div id="journal-manage-list"></div>
   </div>
 
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
 <script src="assets/admin.js"></script>
 </body>
 </html>
