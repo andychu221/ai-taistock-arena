@@ -141,5 +141,16 @@
     "shares": 85,
     "price": 1750,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 1,
+    "date": "2026-06-25",
+    "action": "buy",
+    "ticker": "2382",
+    "name": "廣達",
+    "shares": 405,
+    "price": 370,
+    "note": ""
   }
 ]
