@@ -119,5 +119,16 @@
     "shares": 35,
     "price": 5560,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 2,
+    "date": "2026-06-23",
+    "action": "buy",
+    "ticker": "2327",
+    "name": "國巨",
+    "shares": 190,
+    "price": 1050,
+    "note": ""
   }
 ]
