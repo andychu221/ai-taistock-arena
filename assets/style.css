@@ -158,3 +158,16 @@ footer.site{ text-align:center; padding: 30px 0; color: var(--text-dim); font-si
 
 ::-webkit-scrollbar{ width:8px; height:8px; }
 ::-webkit-scrollbar-thumb{ background:var(--border); border-radius:8px; }
+
+/* 修改 Markdown Body 基本樣式覆蓋 */
+.markdown-body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--text);
+  line-height: 1.6;
+}
+.markdown-body p, .markdown-body ul, .markdown-body ol {
+  margin-bottom: 16px;
+}
+.markdown-body strong {
+  color: var(--claude); /* 利用醒目的色彩標記重點 */
+}
