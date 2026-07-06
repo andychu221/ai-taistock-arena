@@ -174,5 +174,16 @@
     "shares": 85,
     "price": 1750,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 1,
+    "date": "2026-06-24",
+    "action": "buy",
+    "ticker": "2330",
+    "name": "台積電",
+    "shares": 125,
+    "price": 2390,
+    "note": ""
   }
 ]
