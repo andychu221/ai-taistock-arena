@@ -61,6 +61,21 @@ function setStatus(el, msg, ok) {
   el.className = 'status ' + (ok ? 'ok' : 'err');
 }
 
+// ---- 自動補齊股票名稱邏輯 ----
+let stockNamesMap = {};
+fetch('https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL')
+  .then(r => r.json())
+  .then(data => data.forEach(d => stockNamesMap[d.Code] = d.Name))
+  .catch(e => console.log('證交所股票代號字典載入失敗'));
+
+document.getElementById('tx-ticker').addEventListener('blur', (e) => {
+  const code = e.target.value.trim();
+  if (stockNamesMap[code]) {
+    document.getElementById('tx-name').value = stockNamesMap[code];
+  }
+});
+
+
 // ---- GitHub 連線設定表單 ----
 const settingsForm = document.getElementById('settings-form');
 (function initSettings() {
@@ -86,14 +101,21 @@ settingsForm.addEventListener('submit', (e) => {
 let CONFIG = null;
 async function loadConfig() {
   CONFIG = await fetch(`data/config.json?t=${Date.now()}`).then(r => r.json());
-  const options = CONFIG.ais.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+  
+  const options = CONFIG.ais.map(a => `<option value="${a.id}">${a.icon || ''} ${a.name}</option>`).join('');
   document.getElementById('tx-ai').innerHTML = options;
   document.getElementById('j-ai').innerHTML = options;
+  
+  const filterOpts = '<option value="">全部 AI</option>' + options;
+  if(document.getElementById('tx-manage-filter')) document.getElementById('tx-manage-filter').innerHTML = filterOpts;
+  if(document.getElementById('journal-manage-filter')) document.getElementById('journal-manage-filter').innerHTML = filterOpts;
+
   document.getElementById('tx-date').value = new Date().toISOString().slice(0, 10);
   document.getElementById('j-date').value = new Date().toISOString().slice(0, 10);
 
   document.getElementById('cfg-capital').value = CONFIG.initial_capital ?? 1000000;
   document.getElementById('cfg-start-date').value = CONFIG.start_date ?? '';
+  document.getElementById('cfg-benchmark').value = CONFIG.benchmark ?? '0050';
   document.getElementById('cfg-buy-fee').value = CONFIG.buy_fee_rate ?? 0.001425;
   document.getElementById('cfg-sell-fee').value = CONFIG.sell_fee_rate ?? 0.001425;
   document.getElementById('cfg-sell-tax').value = CONFIG.sell_tax_rate ?? 0.003;
@@ -113,6 +135,7 @@ document.getElementById('config-form').addEventListener('submit', async (e) => {
     const { sha, json } = await ghGetFile('data/config.json');
     json.initial_capital = Number(document.getElementById('cfg-capital').value);
     json.start_date = document.getElementById('cfg-start-date').value;
+    json.benchmark = document.getElementById('cfg-benchmark').value.trim();
     json.buy_fee_rate = Number(document.getElementById('cfg-buy-fee').value);
     json.sell_fee_rate = Number(document.getElementById('cfg-sell-fee').value);
     json.sell_tax_rate = Number(document.getElementById('cfg-sell-tax').value);
@@ -208,9 +231,13 @@ txForm.addEventListener('submit', async (e) => {
   }
 });
 
-// ---- 交易紀錄管理清單(刪除/編輯) ----
+// ---- 交易紀錄管理清單(刪除/編輯/過濾) ----
+const txManageFilter = document.getElementById('tx-manage-filter');
+if(txManageFilter) txManageFilter.addEventListener('change', refreshTxManageList);
+
 async function refreshTxManageList() {
   const tbody = document.querySelector('#tx-manage-table tbody');
+  const filter = txManageFilter ? txManageFilter.value : '';
   tbody.innerHTML = `<tr><td colspan="8" class="empty">載入中...</td></tr>`;
   try {
     const tx = await fetch(`data/transactions.json?t=${Date.now()}`).then(r => r.json());
@@ -218,21 +245,28 @@ async function refreshTxManageList() {
       tbody.innerHTML = `<tr><td colspan="8" class="empty">還沒有任何交易紀錄</td></tr>`;
       return;
     }
-    tbody.innerHTML = tx.map((t, i) => `
+    
+    // 加上原始 index 方便編輯刪除，然後再過濾
+    const filteredTx = tx.map((t, i) => ({ ...t, _origIdx: i })).filter(t => !filter || t.ai === filter).reverse();
+    
+    tbody.innerHTML = filteredTx.map(t => {
+      const aiInfo = CONFIG.ais.find(a => a.id === t.ai);
+      return `
       <tr>
         <td class="mono">${t.date}</td>
-        <td>${t.ai}</td>
+        <td>${aiInfo ? aiInfo.icon : ''} ${t.ai}</td>
         <td class="mono">${t.week ?? '-'}</td>
         <td><span class="pill ${t.action}">${t.action === 'buy' ? '買進' : '賣出'}</span></td>
         <td class="mono">${t.ticker} ${t.name || ''}</td>
         <td class="mono">${t.shares}</td>
         <td class="mono">${t.price}</td>
         <td>
-          <button type="button" class="btn" data-edit="${i}">編輯</button>
-          <button type="button" class="btn" data-delete="${i}">刪除</button>
+          <button type="button" class="btn" data-edit="${t._origIdx}">編輯</button>
+          <button type="button" class="btn" data-delete="${t._origIdx}">刪除</button>
         </td>
       </tr>
-    `).join('');
+      `;
+    }).join('');
 
     tbody.querySelectorAll('[data-edit]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -319,9 +353,13 @@ journalForm.addEventListener('submit', async (e) => {
   }
 });
 
-// ---- 週報管理清單(刪除/編輯) ----
+// ---- 週報管理清單(刪除/編輯/過濾) ----
+const journalManageFilter = document.getElementById('journal-manage-filter');
+if(journalManageFilter) journalManageFilter.addEventListener('change', refreshJournalManageList);
+
 async function refreshJournalManageList() {
   const el = document.getElementById('journal-manage-list');
+  const filter = journalManageFilter ? journalManageFilter.value : '';
   el.innerHTML = `<div class="empty">載入中...</div>`;
   try {
     const journal = await fetch(`data/journal.json?t=${Date.now()}`).then(r => r.json());
@@ -329,18 +367,24 @@ async function refreshJournalManageList() {
       el.innerHTML = `<div class="empty">還沒有任何週報</div>`;
       return;
     }
-    el.innerHTML = journal.map((j, i) => `
+    
+    const filteredJ = journal.map((j, i) => ({...j, _origIdx: i})).filter(j => !filter || j.ai === filter).reverse();
+    
+    el.innerHTML = filteredJ.map(j => {
+      const aiInfo = CONFIG.ais.find(a => a.id === j.ai);
+      return `
       <div class="journal-week">
-        <div class="manage-row">
+        <div class="manage-row" style="display:flex; align-items:center; gap:12px; padding:12px; background:var(--surface-2);">
           <span class="weeknum">第 ${j.week} 週</span>
-          <span class="ai-tag">${j.ai}</span>
+          <span class="ai-tag">${aiInfo ? aiInfo.icon : ''} ${j.ai}</span>
           <span class="mono" style="color:var(--text-dim)">${j.date}</span>
           <strong style="margin-left:auto">${j.title || ''}</strong>
-          <button type="button" class="btn" data-jedit="${i}">編輯</button>
-          <button type="button" class="btn" data-jdelete="${i}">刪除</button>
+          <button type="button" class="btn" data-jedit="${j._origIdx}">編輯</button>
+          <button type="button" class="btn" data-jdelete="${j._origIdx}">刪除</button>
         </div>
       </div>
-    `).join('');
+      `;
+    }).join('');
 
     el.querySelectorAll('[data-jedit]').forEach(btn => {
       btn.addEventListener('click', () => {
