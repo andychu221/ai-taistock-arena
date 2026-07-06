@@ -1,8 +1,8 @@
-// 準備 SVG 格式的企業 LOGO
+// 準備網路真實企業 LOGO
 const LOGOS = {
-  claude: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
-  chatgpt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M12 2a10 10 0 0 1 10 10M12 22a10 10 0 0 1-10-10"/></svg>`, // 抽象示意圖
-  gemini: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
+  claude: 'https://upload.wikimedia.org/wikipedia/commons/4/47/Claude_AI_logo.svg',
+  chatgpt: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg',
+  gemini: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg'
 };
 
 async function loadData() {
@@ -18,7 +18,9 @@ async function loadData() {
 
 function fmtMoney(n) { return Math.round(n).toLocaleString('zh-Hant-TW'); }
 function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
-function getIconHtml(aiId) { return LOGOS[aiId] || ''; }
+function getIconHtml(aiId) { 
+  return LOGOS[aiId] ? `<img src="${LOGOS[aiId]}" alt="${aiId}">` : ''; 
+}
 
 function getPriceVal(p) { return (typeof p === 'object' && p !== null) ? p.close : p; }
 
@@ -85,8 +87,13 @@ function computeBenchmarkSeries(prices, benchmarkTicker, dates, startCapital) {
 }
 
 function buildDateAxis(prices, startDate) {
-  const set = new Set([startDate, new Date().toISOString().slice(0, 10)]);
-  Object.values(prices).forEach(map => Object.keys(map).forEach(d => { if(d >= startDate) set.add(d); }));
+  // 將開始日期的「前一天」加入，作為 0% 的完美起點
+  const startDt = new Date(startDate);
+  startDt.setDate(startDt.getDate() - 1);
+  const dayZero = startDt.toISOString().slice(0, 10);
+
+  const set = new Set([dayZero, startDate, new Date().toISOString().slice(0, 10)]);
+  Object.values(prices).forEach(map => Object.keys(map).forEach(d => { if(d >= dayZero) set.add(d); }));
   return Array.from(set).sort();
 }
 
@@ -109,7 +116,7 @@ let scoreboardCharts = [];
      bmSeries = computeBenchmarkSeries(prices, config.benchmark, dates, config.initial_capital);
   }
 
-  safeRun(() => renderScoreboard(config, seriesByAI));
+  safeRun(() => renderScoreboard(config, seriesByAI, prices));
   safeRun(() => renderChart(config, dates, seriesByAI, bmSeries));
   safeRun(() => renderHoldingsView(config, seriesByAI, prices, transactions));
   safeRun(() => renderTransactions(config, transactions));
@@ -118,11 +125,13 @@ let scoreboardCharts = [];
 
 function safeRun(fn) { try { fn(); } catch (err) { console.error(err); } }
 
-function renderScoreboard(config, seriesByAI) {
+function renderScoreboard(config, seriesByAI, prices) {
   const el = document.getElementById('scoreboard');
   el.innerHTML = '';
   scoreboardCharts.forEach(c => c.destroy());
   scoreboardCharts = [];
+
+  const bgColors = ['#4A90E2', '#50E3C2', '#F5A623', '#FF6B6B', '#9B51E0', '#B8E986', '#F0F8FF', '#FFD700'];
 
   config.ais.forEach(ai => {
     const s = seriesByAI[ai.id];
@@ -134,25 +143,35 @@ function renderScoreboard(config, seriesByAI) {
     const dailyPlPct = (dailyPlAmt / yesterday.value) * 100;
     const dailyUp = dailyPlAmt >= 0;
 
-    // 計算未實現 P&L (當前持股市值 - 總成本)
-    let totalStockVal = 0;
+    // 計算記分板小圓餅圖細節
+    let unrealizedAmt = 0;
     let totalCost = 0;
-    const labels = [], dataVals = [], bgColors = ['#4A90E2', '#50E3C2', '#F5A623', '#FF6B6B', '#9B51E0', '#B8E986'];
+    let stockValueSum = 0;
+    const dataLabels = [], dataValues = [], pieColors = [];
     
-    Object.keys(today.shares).forEach((ticker, idx) => {
-      const p = today.value - today.cash; // approximations later fixed
-      const sh = today.shares[ticker];
-      const cost = today.cost[ticker];
-      // Need current price to get actual holding val
-      // Workaround since today.value is already calculated accurately in computeSeries
-      // We'll recalculate holding values here for the chart
+    let colorIdx = 0;
+    Object.keys(today.shares).forEach(ticker => {
+      dataLabels.push(ticker);
+      
+      const curPrice = priceOnOrBefore(prices, ticker, today.date) || (today.cost[ticker] / today.shares[ticker] || 0);
+      const val = curPrice * today.shares[ticker];
+      
+      totalCost += today.cost[ticker];
+      stockValueSum += val;
+      
+      dataValues.push(val);
+      pieColors.push(bgColors[colorIdx % bgColors.length]);
+      colorIdx++;
     });
+    
+    unrealizedAmt = stockValueSum - totalCost;
+    const unrealizedPct = totalCost > 0 ? (unrealizedAmt / totalCost) * 100 : 0;
+    const unrealizedUp = unrealizedAmt >= 0;
 
-    // We must re-fetch price for accuracy in pie chart
-    // Re-evaluating holding values based on today's price (or latest available)
-    // to get accurate unrealized P&L
-    // Note: totalStockVal could just be (today.value - today.cash)
-    // but calculating per stock is better for the donut.
+    // 加回現金到圓餅圖
+    dataLabels.push('現金');
+    dataValues.push(today.cash);
+    pieColors.push('#262626'); // 現金用暗色
 
     el.insertAdjacentHTML('beforeend', `
       <div class="card">
@@ -160,7 +179,7 @@ function renderScoreboard(config, seriesByAI) {
         <div class="sb-layout">
           <div class="sb-left">
             <div class="card-head">
-              <span style="color:${ai.color}">${getIconHtml(ai.id)}</span>
+              ${getIconHtml(ai.id)}
               <span class="name">${ai.name}</span>
             </div>
             <div class="value-big mono">NT$ ${fmtMoney(today.value)}</div>
@@ -172,51 +191,19 @@ function renderScoreboard(config, seriesByAI) {
             <canvas id="sb-donut-${ai.id}"></canvas>
             <div class="donut-center-text">
               <div class="lbl">未實現 P&L</div>
-              <div id="sb-donut-val-${ai.id}" class="val mono">-</div>
+              <div class="val mono" style="color:${unrealizedUp ? 'var(--up)' : 'var(--down)'}">
+                ${fmtMoney(unrealizedAmt)}<br/>${fmtPct(unrealizedPct)}
+              </div>
             </div>
           </div>
         </div>
       </div>
     `);
-  });
-
-  // 繪製記分板的小圓餅圖與計算總未實現
-  config.ais.forEach(ai => {
-    const s = seriesByAI[ai.id];
-    const today = s[s.length - 1];
-    
-    let unrealizedAmt = 0;
-    let totalCost = 0;
-    let stockValueSum = 0;
-    const dataLabels = [], dataValues = [];
-    const bgColors = ['#4A90E2', '#50E3C2', '#F5A623', '#FF6B6B', '#9B51E0', '#B8E986'];
-
-    Object.keys(today.shares).forEach(ticker => {
-      // Find latest price from the series value difference (or we can just calculate it)
-      // For simplicity, we know today.value = cash + sum(shares * price)
-      // So price = (value - cash) logic per stock.
-      // To be precise we need `priceOnOrBefore` again, but we don't have `prices` here easily.
-      // Wait, we DO need `prices`. Let's assume we can approximate or we just pass it in.
-      // To keep it simple, I'll calculate total cost directly from today.cost
-      totalCost += today.cost[ticker];
-    });
-    
-    stockValueSum = today.value - today.cash;
-    unrealizedAmt = stockValueSum - totalCost;
-    const unrealizedPct = totalCost > 0 ? (unrealizedAmt / totalCost) * 100 : 0;
-    
-    const up = unrealizedAmt >= 0;
-    const valEl = document.getElementById(`sb-donut-val-${ai.id}`);
-    valEl.innerHTML = `<span style="color:${up?'var(--up)':'var(--down)'}">${fmtMoney(unrealizedAmt)}<br/>${fmtPct(unrealizedPct)}</span>`;
-
-    // 圓餅圖內容：持股比例 + 現金
-    dataLabels.push('持股', '現金');
-    dataValues.push(stockValueSum, today.cash);
 
     const ctx = document.getElementById(`sb-donut-${ai.id}`);
     scoreboardCharts.push(new Chart(ctx, {
       type: 'doughnut',
-      data: { labels: dataLabels, datasets: [{ data: dataValues, backgroundColor: [ai.color, '#262626'], borderWidth: 0 }] },
+      data: { labels: dataLabels, datasets: [{ data: dataValues, backgroundColor: pieColors, borderWidth: 0 }] },
       options: { cutout: '80%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, responsive:true, maintainAspectRatio:false }
     }));
   });
@@ -252,12 +239,12 @@ function renderChart(config, dates, seriesByAI, bmSeries) {
       responsive: true,
       interaction: { mode: 'index', intersect: false },
       plugins: { 
-        legend: { labels: { color: '#FFFFFF' } }, // 圖例文字改為白色
+        legend: { labels: { color: '#FFFFFF' } }, 
         tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.formattedValue}%` } } 
       },
       scales: {
-        x: { ticks: { color: '#9CA3AF', maxTicksLimit: 8 }, grid: { color: '#262626' } },
-        y: { ticks: { color: '#9CA3AF', callback: v => v + '%' }, grid: { color: '#262626' } },
+        x: { ticks: { color: '#FFFFFF', maxTicksLimit: 8 }, grid: { color: '#262626' } },
+        y: { ticks: { color: '#FFFFFF', callback: v => v + '%' }, grid: { color: '#262626' } },
       }
     }
   });
@@ -298,8 +285,9 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
       const snap = s.find(p => p.date >= targetDate) || s[s.length - 1]; 
       
       const tickers = Object.keys(snap.shares);
-      const dataLabels = [];
-      const dataValues = [];
+      const dataLabels = [];     // 用於圖表
+      const dataValues = [];     // 原始數值
+      const barDataValues = [];  // 長條圖專用 (萬)
       const bgColors = ['#4A90E2', '#50E3C2', '#F5A623', '#FF6B6B', '#9B51E0', '#B8E986'];
       
       let legendRows = '';
@@ -315,11 +303,11 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
             const up = unpl >= 0;
             const cStr = bgColors[i % bgColors.length];
             
-            dataLabels.push(ticker);
-            dataValues.push(val);
+            const txName = transactions.find(t=>t.ticker===ticker)?.name || ticker;
             
-            // 抓取最後一個已知名字 (如果需要的話可以從 tx 中反推)
-            const txName = transactions.find(t=>t.ticker===ticker)?.name || '';
+            dataLabels.push(txName);
+            dataValues.push(val);
+            barDataValues.push(val / 10000); // 轉換為「萬」
             
             legendRows += `
               <tr>
@@ -334,10 +322,11 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
       
       dataLabels.push('現金');
       dataValues.push(snap.cash);
+      barDataValues.push(snap.cash / 10000);
       const cashPct = (snap.cash / snap.value) * 100;
       legendRows += `
           <tr>
-            <td><span class="color-box" style="background:#333"></span>現金</td>
+            <td><span class="color-box" style="background:#262626"></span>現金</td>
             <td class="mono" style="text-align:right">${fmtMoney(snap.cash)}</td>
             <td class="mono" style="text-align:right">${cashPct.toFixed(1)}%</td>
             <td class="mono" style="text-align:right">-</td>
@@ -347,11 +336,18 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
       const html = `
       <div class="card" style="display:flex; flex-direction:column; gap:16px;">
         <div class="accent" style="background:${ai.color}"></div>
-        <div class="card-head" style="justify-content:center"><span style="color:${ai.color}">${getIconHtml(ai.id)}</span> <span class="name">${ai.name} 分佈</span></div>
-        <div style="position:relative; width:100%; height:180px; margin:0 auto;">
-          <canvas id="donut-${ai.id}"></canvas>
+        <div class="card-head" style="justify-content:center">
+          ${getIconHtml(ai.id)} <span class="name">${ai.name} 投資組合</span>
         </div>
-        <canvas id="bar-${ai.id}" height="100"></canvas>
+        
+        <div style="position:relative; width:100%; height:220px; margin:0 auto;">
+          <canvas id="donut-${ai.id}"></canvas>
+          <div style="position:absolute; top:50%; left:25%; transform:translate(-50%,-50%); width:48px; height:48px; pointer-events:none;">
+            ${getIconHtml(ai.id)}
+          </div>
+        </div>
+        
+        <canvas id="bar-${ai.id}" height="130"></canvas>
         
         <table class="legend-table">
           <thead><tr><th>標的</th><th style="text-align:right">市值</th><th style="text-align:right">佔比</th><th style="text-align:right">未實現損益</th></tr></thead>
@@ -363,19 +359,29 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
       const ctxDonut = document.getElementById(`donut-${ai.id}`);
       holdingsCharts.push(new Chart(ctxDonut, {
         type: 'doughnut',
-        data: { labels: dataLabels, datasets: [{ data: dataValues, backgroundColor: [...bgColors.slice(0, tickers.length), '#333'], borderWidth: 0 }] },
-        options: { cutout: '65%', plugins: { legend: { display: false } }, responsive:true, maintainAspectRatio:false }
+        data: { labels: dataLabels, datasets: [{ data: dataValues, backgroundColor: [...bgColors.slice(0, tickers.length), '#262626'], borderWidth: 0 }] },
+        options: { 
+          cutout: '65%', 
+          plugins: { 
+            legend: { display: true, position: 'right', labels: { color: '#F3F4F6', boxWidth: 12 } } 
+          }, 
+          responsive:true, 
+          maintainAspectRatio:false 
+        }
       }));
 
       const ctxBar = document.getElementById(`bar-${ai.id}`);
       holdingsCharts.push(new Chart(ctxBar, {
         type: 'bar',
-        data: { labels: dataLabels, datasets: [{ data: dataValues, backgroundColor: [...bgColors.slice(0, tickers.length), '#333'], borderRadius: 4 }] },
+        data: { labels: dataLabels, datasets: [{ data: barDataValues, backgroundColor: [...bgColors.slice(0, tickers.length), '#262626'], borderRadius: 4 }] },
         options: { 
-          plugins: { legend: { display: false } }, 
+          plugins: { 
+            legend: { display: false },
+            tooltip: { callbacks: { label: c => c.formattedValue + ' 萬' } }
+          }, 
           scales: { 
             x: { ticks: { color: '#9CA3AF' }, grid: { display:false } }, 
-            y: { display: false } 
+            y: { ticks: { color: '#9CA3AF' }, grid: { color: '#262626' } } 
           } 
         }
       }));
@@ -393,7 +399,6 @@ function renderTransactions(config, transactions) {
     config.ais.forEach(ai => aiSelect.insertAdjacentHTML('beforeend', `<option value="${ai.id}">${ai.name}</option>`));
   }
 
-  // 計算損益成本
   const runningCosts = {}; 
   const enrichedTx = transactions.sort((a,b)=>a.date.localeCompare(b.date)).map(t => {
     const key = t.ai + '_' + t.ticker;
@@ -401,7 +406,7 @@ function renderTransactions(config, transactions) {
     const rc = runningCosts[key];
     const amt = t.shares * t.price;
     let fee=0, tax=0, netPl = null;
-    t.amount = amt; // 方便排序
+    t.amount = amt; 
 
     if(t.action === 'buy') {
       fee = Math.floor(amt * (config.buy_fee_rate || 0));
@@ -420,7 +425,6 @@ function renderTransactions(config, transactions) {
     return { ...t, fee, tax, netPl };
   });
 
-  // 排序狀態
   let sortCol = 'date';
   let sortDesc = true;
 
@@ -448,14 +452,11 @@ function renderTransactions(config, transactions) {
       return matchAi && matchAction && matchTicker;
     });
 
-    // 排序
     rows.sort((a, b) => {
       let valA = a[sortCol];
       let valB = b[sortCol];
-      
       if(valA === null || valA === undefined) valA = -Infinity;
       if(valB === null || valB === undefined) valB = -Infinity;
-
       if(typeof valA === 'string') {
          return sortDesc ? valB.localeCompare(valA) : valA.localeCompare(valB);
       } else {
@@ -477,7 +478,7 @@ function renderTransactions(config, transactions) {
 
       return `<tr>
         <td class="mono">${t.date}</td>
-        <td><span class="ai-tag" style="color:${aiInfo?.color}">${icon} ${t.ai}</span></td>
+        <td><span class="ai-tag">${icon} ${t.ai}</span></td>
         <td class="mono">${t.week ?? '-'}</td>
         <td><span class="pill ${t.action}">${t.action === 'buy' ? '買進' : '賣出'}</span></td>
         <td class="mono">${t.ticker} ${t.name || ''}</td>
@@ -494,8 +495,6 @@ function renderTransactions(config, transactions) {
   aiSelect.addEventListener('change', draw);
   actionSelect.addEventListener('change', draw);
   tickerInput.addEventListener('input', draw);
-  
-  // 初始設定排序箭頭
   document.querySelector(`#tx-table th[data-sort="date"]`).classList.add('desc');
   draw();
 }
@@ -509,7 +508,8 @@ function renderJournal(config, journal) {
 
   function draw() {
     const filter = select.value;
-    const rows = journal.filter(j => !filter || j.ai === filter).sort((a, b) => b.date.localeCompare(a.date)).reverse();
+    // 預設將日期排序由新到舊 (Descending)
+    const rows = journal.filter(j => !filter || j.ai === filter).sort((a, b) => b.date.localeCompare(a.date));
     if (rows.length === 0) {
       list.innerHTML = `<div class="empty"><b>還沒有週報</b></div>`;
       return;
@@ -522,10 +522,11 @@ function renderJournal(config, journal) {
         
       const aiInfo = config.ais.find(x => x.id === j.ai);
       
-      return `<details class="journal-week" open>
+      // 這裡不加上 open 屬性，確保預設是折疊狀態
+      return `<details class="journal-week">
         <summary>
           <span class="weeknum">第 ${j.week} 週</span>
-          <span class="ai-tag" style="color:${aiInfo?.color}">${getIconHtml(j.ai)} ${j.ai}</span>
+          <span class="ai-tag">${getIconHtml(j.ai)} ${j.ai}</span>
           <span class="mono" style="color:var(--text-dim)">${j.date}</span>
           <strong style="margin-left:auto">${j.title || ''}</strong>
         </summary>
