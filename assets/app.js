@@ -170,6 +170,10 @@ function renderScoreboard(config, seriesByAI, prices) {
     const dailyPlPct = (dailyPlAmt / yesterday.value) * 100;
     const dailyUp = dailyPlAmt >= 0;
 
+    const totalPlAmt = today.value - config.initial_capital;
+    const totalPlPct = (totalPlAmt / config.initial_capital) * 100;
+    const totalPlUp = totalPlAmt >= 0;
+    
     let unrealizedAmt = 0;
     let totalCost = 0;
     let stockValueSum = 0;
@@ -209,15 +213,18 @@ function renderScoreboard(config, seriesByAI, prices) {
             </div>
             <div class="value-big mono">NT$ ${fmtMoney(today.value)}</div>
             <div class="ret ${dailyUp ? 'up' : 'down'} mono">
-              每日 P&L: ${fmtMoney(dailyPlAmt)} / ${fmtPct(dailyPlPct)}
+              未實現 P&L: ${fmtMoney(unrealizedAmt)} / ${fmtPct(unrealizedPct)}
+            </div>
+            <div class="ret ${totalPlUp ? 'up' : 'down'} mono" style="margin-top:4px; font-size:12px;">
+              累積 P&L: ${fmtMoney(totalPlAmt)} / ${fmtPct(totalPlPct)}
             </div>
           </div>
           <div class="sb-right">
             <canvas id="sb-donut-${ai.id}"></canvas>
             <div class="donut-center-text">
-              <div class="lbl">未實現 P&L</div>
-              <div class="val mono" style="color:${unrealizedUp ? 'var(--up)' : 'var(--down)'}">
-                ${fmtMoney(unrealizedAmt)}<br/>${fmtPct(unrealizedPct)}
+              <div class="lbl">今日 P&L</div>
+              <div class="val mono" style="color:${dailyUp ? 'var(--up)' : 'var(--down)'}">
+                ${fmtMoney(dailyPlAmt)}<br/>${fmtPct(dailyPlPct)}
               </div>
             </div>
           </div>
@@ -254,6 +261,7 @@ function renderChart(config, dates, seriesByAI, bmSeries) {
       label: `大盤基準 (${config.benchmark})`,
       data: bmSeries.map(p => (((p.value - config.initial_capital) / config.initial_capital) * 100).toFixed(2)),
       borderColor: '#9CA3AF', 
+      backgroundColor: 'transparent', 
       borderDash: [5, 5],
       borderWidth: 1.5, 
       pointRadius: 0, tension: 0.25,
