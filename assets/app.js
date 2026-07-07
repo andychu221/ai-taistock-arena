@@ -233,6 +233,8 @@ function renderScoreboard(config, seriesByAI, prices) {
     `);
 
     const ctx = document.getElementById(`sb-donut-${ai.id}`);
+    const tooltipData = {}; // key: label, value: { name, val, pct, unplPct }
+    
     scoreboardCharts.push(new Chart(ctx, {
       type: 'doughnut',
       data: { labels: dataLabels, datasets: [{ data: dataValues, backgroundColor: pieColors, borderWidth: 0 }] },
@@ -344,6 +346,7 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
             const txName = transactions.find(t=>t.ticker===ticker)?.name || ticker;
             
             dataLabels.push(txName);
+          
             dataValues.push(val);
             barDataValues.push(val / 10000); 
             
@@ -547,7 +550,7 @@ function renderJournal(config, journal) {
 
   function draw() {
     const filter = select ? select.value : '';
-    const rows = journal.filter(j => !filter || j.ai === filter).sort((a, b) => b.date.localeCompare(a.date)).reverse();
+    const rows = journal.filter(j => !filter || j.ai === filter).sort((a, b) => b.date.localeCompare(a.date));
     if (rows.length === 0) {
       list.innerHTML = `<div class="empty"><b>還沒有週報</b></div>`;
       return;
