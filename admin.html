@@ -19,6 +19,7 @@
   .status.err{ color: var(--down); }
   .warn{ background: rgba(248,113,113,0.1); border:1px solid var(--down); color:#fecaca; padding:12px 16px; border-radius:10px; font-size:13px; margin-bottom:20px; }
   .current-holdings{ font-size:12px; color:var(--text-dim); margin-top:-4px; }
+  nav.admin-tabs{ margin-bottom:20px; width:fit-content; }
 </style>
 </head>
 <body>
@@ -42,6 +43,14 @@
     ⚠️ 這個頁面需要你的 GitHub Token 才能寫入資料，Token 只會存在「這台瀏覽器」的 localStorage，不會上傳到任何地方。
     請使用權限僅限這個 repo、且只有 Contents 讀寫權限的 <b>fine-grained token</b>，並且不要把這個 admin.html 的連結分享給別人。
   </div>
+
+  <nav class="tabs admin-tabs">
+    <button data-admintab="connect" class="active">連線與帳本設定</button>
+    <button data-admintab="tx">交易紀錄</button>
+    <button data-admintab="journal">週報管理</button>
+  </nav>
+
+  <section id="admintab-connect" class="active">
 
   <div class="block">
     <h2><span class="sw"></span>GitHub 連線設定</h2>
@@ -82,6 +91,10 @@
       </div>
     </form>
   </div>
+
+  </section>
+
+  <section id="admintab-tx">
 
   <div class="block">
     <h2><span class="sw"></span>新增進出場紀錄</h2>
@@ -139,6 +152,10 @@
     </div>
   </div>
 
+  </section>
+
+  <section id="admintab-journal">
+
   <div class="block">
     <h2><span class="sw"></span>貼上週報 / 覆盤分析</h2>
     <form id="journal-form">
@@ -175,6 +192,8 @@
     </div>
     <div id="journal-manage-list"></div>
   </div>
+
+  </section>
 
 </main>
 
