@@ -249,13 +249,13 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
           legend: { display: false },
           tooltip: {
             enabled: true,
-            backgroundColor: '#171717',
-            borderColor: '#333',
+            backgroundColor: 'rgba(255, 244, 214, 0.95)',
+            borderColor: '#E8C77E',
             borderWidth: 1,
             padding: 10,
-            titleColor: '#fff',
+            titleColor: '#1a1a1a',
             titleFont: { weight: '700' },
-            bodyColor: '#F3F4F6',
+            bodyColor: '#2a2a2a',
             callbacks: {
               title: (items) => {
                 const it = tooltipItems[items[0].dataIndex];
@@ -451,7 +451,7 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
         options: { 
           cutout: '65%', 
           plugins: { 
-            legend: { display: true, position: 'right', labels: { color: '#F3F4F6', boxWidth: 12 } },
+            legend: { display: false },
             tooltip: {
               callbacks: {
                 label: (item) => {
@@ -600,22 +600,22 @@ function renderTransactions(config, transactions) {
 function renderJournal(config, journal) {
   const list = document.getElementById('journal-list');
   const select = document.getElementById('journal-filter-ai');
-  const startInput = document.getElementById('journal-filter-start');
-  const endInput = document.getElementById('journal-filter-end');
-  const clearBtn = document.getElementById('journal-filter-clear');
+  const dateSelect = document.getElementById('journal-filter-date');
   if(select && select.options.length === 1) {
     config.ais.forEach(ai => select.insertAdjacentHTML('beforeend', `<option value="${ai.id}">${ai.name}</option>`));
+  }
+  if(dateSelect && dateSelect.options.length === 1) {
+    const dates = [...new Set(journal.map(j => j.date).filter(Boolean))].sort((a, b) => b.localeCompare(a));
+    dates.forEach(d => dateSelect.insertAdjacentHTML('beforeend', `<option value="${d}">${d}</option>`));
   }
 
   function draw() {
     const filter = select ? select.value : '';
-    const startDate = startInput ? startInput.value : '';
-    const endDate = endInput ? endInput.value : '';
+    const dateFilter = dateSelect ? dateSelect.value : '';
     const rows = journal.filter(j => {
       const matchAi = !filter || j.ai === filter;
-      const matchStart = !startDate || j.date >= startDate;
-      const matchEnd = !endDate || j.date <= endDate;
-      return matchAi && matchStart && matchEnd;
+      const matchDate = !dateFilter || j.date === dateFilter;
+      return matchAi && matchDate;
     }).sort((a, b) => b.date.localeCompare(a.date));
     if (rows.length === 0) {
       list.innerHTML = `<div class="empty"><b>還沒有週報</b></div>`;
@@ -641,13 +641,7 @@ function renderJournal(config, journal) {
     }).join('');
   }
   if(select) select.addEventListener('change', draw);
-  if(startInput) startInput.addEventListener('change', draw);
-  if(endInput) endInput.addEventListener('change', draw);
-  if(clearBtn) clearBtn.addEventListener('click', () => {
-    if(startInput) startInput.value = '';
-    if(endInput) endInput.value = '';
-    draw();
-  });
+  if(dateSelect) dateSelect.addEventListener('change', draw);
   draw();
 }
 
