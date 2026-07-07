@@ -104,6 +104,8 @@ section.active{ display:block; }
 .ret{ font-size: 13px; font-weight:600; display:flex; align-items:center; gap:6px; white-space:nowrap; }
 .ret.up{ color: var(--up); }
 .ret.down{ color: var(--down); }
+.pl-row{ display:flex; align-items:baseline; gap:8px; white-space:nowrap; }
+.pl-row .pl-label{ font-size:11px; color:var(--text-dim); flex:0 0 auto; }
 .donut-center-text{
   position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
   text-align:center; pointer-events:none; width: 85%;
