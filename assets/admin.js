@@ -1,5 +1,30 @@
 const LS_KEY = 'ai-stock-arena-settings';
 
+// ---- 各 AI 企業的真實 Logo (與 app.js 邏輯一致) ----
+const getLogoUrl = (domain) => `https://getlogo.dev/logos/${domain}?token=pub_97e0e4df192f20dd2626307d2148f88d`;
+const LOGOS = {
+  claude: getLogoUrl('anthropic.com'),
+  chatgpt: getLogoUrl('openai.com'),
+  gemini: getLogoUrl('google.com'),
+};
+function getIconHtml(aiId) {
+  return LOGOS[aiId] ? `<img src="${LOGOS[aiId]}" alt="${aiId}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;border-radius:3px;">` : '';
+}
+
+// ---- 分頁 Tab 切換 ----
+(function setupAdminTabs() {
+  const buttons = document.querySelectorAll('nav.admin-tabs button[data-admintab]');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('main > section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      const target = document.getElementById('admintab-' + btn.dataset.admintab);
+      if (target) target.classList.add('active');
+    });
+  });
+})();
+
 function getSettings() {
   try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
   catch { return {}; }
@@ -102,7 +127,7 @@ let CONFIG = null;
 async function loadConfig() {
   CONFIG = await fetch(`data/config.json?t=${Date.now()}`).then(r => r.json());
   
-  const options = CONFIG.ais.map(a => `<option value="${a.id}">${a.icon || ''} ${a.name}</option>`).join('');
+  const options = CONFIG.ais.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
   document.getElementById('tx-ai').innerHTML = options;
   document.getElementById('j-ai').innerHTML = options;
   
@@ -254,7 +279,7 @@ async function refreshTxManageList() {
       return `
       <tr>
         <td class="mono">${t.date}</td>
-        <td>${aiInfo ? aiInfo.icon : ''} ${t.ai}</td>
+        <td><span style="display:inline-flex;align-items:center;gap:6px;">${getIconHtml(t.ai)} ${t.ai}</span></td>
         <td class="mono">${t.week ?? '-'}</td>
         <td><span class="pill ${t.action}">${t.action === 'buy' ? '買進' : '賣出'}</span></td>
         <td class="mono">${t.ticker} ${t.name || ''}</td>
@@ -376,7 +401,7 @@ async function refreshJournalManageList() {
       <div class="journal-week">
         <div class="manage-row" style="display:flex; align-items:center; gap:12px; padding:12px; background:var(--surface-2);">
           <span class="weeknum">第 ${j.week} 週</span>
-          <span class="ai-tag">${aiInfo ? aiInfo.icon : ''} ${j.ai}</span>
+          <span class="ai-tag">${getIconHtml(j.ai)} ${j.ai}</span>
           <span class="mono" style="color:var(--text-dim)">${j.date}</span>
           <strong style="margin-left:auto">${j.title || ''}</strong>
           <button type="button" class="btn" data-jedit="${j._origIdx}">編輯</button>
