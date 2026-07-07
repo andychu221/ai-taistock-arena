@@ -144,7 +144,7 @@
         <option value="">全部 AI</option>
       </select>
     </div>
-    <div style="overflow-x:auto">
+    <div class="table-scroll">
       <table id="tx-manage-table">
         <thead><tr><th>日期</th><th>AI</th><th>週次</th><th>動作</th><th>股票</th><th>股數</th><th>價格</th><th></th></tr></thead>
         <tbody></tbody>
@@ -176,10 +176,6 @@
         <textarea id="j-content" placeholder="貼上這週的選股邏輯、績效檢討、下週調整方向..."></textarea>
       </label>
       <div>
-        <div class="status" style="margin-bottom:6px;">即時預覽(前台實際顯示效果)</div>
-        <div id="j-preview" class="markdown-body" style="background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:16px; min-height:80px;"></div>
-      </div>
-      <div>
         <button type="submit" class="btn primary" id="j-submit-btn">寫入 GitHub</button>
         <button type="button" class="btn" id="j-cancel-edit" style="display:none">取消編輯</button>
         <span id="j-status" class="status"></span>
@@ -201,8 +197,6 @@
 
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <script src="assets/admin.js"></script>
 </body>
 </html>
