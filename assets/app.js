@@ -380,7 +380,10 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
         <div class="card-head" style="justify-content:center">
           <span style="color:${ai.color}; display:flex; align-items:center;">${getIconHtml(ai.id)}</span> <span class="name">${ai.name} 投資組合</span>
         </div>
-        
+        <div style="position:relative; width:100%; height:220px; margin:0 auto;">
+          <canvas id="donut-${ai.id}"></canvas>
+          
+        </div>
         <canvas id="bar-${ai.id}" height="130"></canvas>
         
         <table class="legend-table">
