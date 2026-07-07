@@ -140,8 +140,8 @@ let mainChart = null;
   });
   
   let bmSeries = [];
-  if (config.benchmark && prices[config.benchmark]) {
-     bmSeries = computeBenchmarkSeries(prices, config.benchmark, dates, config.initial_capital);
+  if (config.benchmark_ticker && prices[config.benchmark_ticker]) {
+     bmSeries = computeBenchmarkSeries(prices, config.benchmark_ticker, dates, config.initial_capital);
   }
 
   safeRun(() => renderScoreboard(config, seriesByAI, prices));
