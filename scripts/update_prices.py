@@ -1,8 +1,3 @@
-"""
-使用 yfinance 抓取股票資料，包含開、高、低、收、量 (OHLCV)。
-會自動追蹤交易紀錄中的股票以及 config.json 中設定的 benchmark。
-若為新股票，會抓取過去一年的歷史資料；否則只補足最新的資料。
-"""
 import json
 import sys
 from datetime import datetime, timezone, timedelta
@@ -14,6 +9,9 @@ def load_json(path, default):
             return json.load(f)
     except FileNotFoundError:
         return default
+    except json.JSONDecodeError as e:
+        print(f"警告：{path} 格式錯誤，自動重置。錯誤訊息: {e}")
+        return default
 
 def save_json(path, data):
     with open(path, "w", encoding="utf-8") as f:
@@ -24,8 +22,8 @@ def main():
     transactions = load_json("data/transactions.json", [])
     config = load_json("data/config.json", {})
     prices = load_json("data/prices.json", {})
-    
-    tickers = {t["ticker"] for t in transactions if t.get("ticker")}
+
+    tickers = {t["ticker"] for t in transactions if isinstance(t, dict) and t.get("ticker")}
     benchmark = config.get("benchmark", "0050")
     if benchmark:
         tickers.add(benchmark)
@@ -51,12 +49,16 @@ def main():
             print(f"找不到代號資料: {ticker}")
             continue
             
-        if ticker not in prices:
+        if ticker not in prices or not isinstance(prices[ticker], dict):
             prices[ticker] = {}
             
         for date, row in df.iterrows():
             date_str = date.strftime("%Y-%m-%d")
             # 若已經有資料且並非今日，則不覆寫（保留持續疊加特性）
+            # 過濾掉 NaN (沒開盤或壞資料)
+            if math.isnan(row['Close']):
+                continue
+                
             prices[ticker][date_str] = {
                 "open": round(row['Open'], 2),
                 "high": round(row['High'], 2),
