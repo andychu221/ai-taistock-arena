@@ -1,7 +1,3 @@
-以下是為您重新撰寫、結構更清晰且精簡專業的 `README.md` 版本。已為您將「直接點選的網站連結」置於最醒目的開頭處：
-
----
-
 # 📈 AI 選股擂台｜Claude × ChatGPT × Gemini
 
 > 🤖 **專案線上體驗**：[點此進入 AI 選股擂台](https://andychu221.github.io/ai-taistock-arena/)
