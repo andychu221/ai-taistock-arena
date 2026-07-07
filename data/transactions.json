@@ -240,5 +240,16 @@
     "shares": 21,
     "price": 7205,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 2,
+    "date": "2026-06-26",
+    "action": "sell",
+    "ticker": "8210",
+    "name": "勤誠",
+    "shares": 107,
+    "price": 1400,
+    "note": ""
   }
 ]
