@@ -58,7 +58,7 @@
         </select>
         <input type="text" id="tx-filter-ticker" placeholder="搜尋股票代號或名稱...">
       </div>
-      <div style="overflow-x:auto">
+      <div class="table-scroll">
         <table id="tx-table">
           <thead>
             <tr>
@@ -88,6 +88,9 @@
         <select id="journal-filter-ai">
           <option value="">全部 AI</option>
         </select>
+        <label class="date-filter">起始日期 <input type="date" id="journal-filter-start"></label>
+        <label class="date-filter">結束日期 <input type="date" id="journal-filter-end"></label>
+        <button type="button" class="btn" id="journal-filter-clear">清除日期</button>
       </div>
       <div id="journal-list"></div>
     </div>
