@@ -17,8 +17,8 @@
     "action": "buy",
     "ticker": "3017",
     "name": "奇鋐",
-    "shares": 85,
-    "price": 2350,
+    "shares": 80,
+    "price": 2490,
     "note": ""
   },
   {
@@ -28,8 +28,8 @@
     "action": "buy",
     "ticker": "2330",
     "name": "台積電",
-    "shares": 125,
-    "price": 2390,
+    "shares": 122,
+    "price": 2455,
     "note": ""
   },
   {
@@ -39,8 +39,8 @@
     "action": "buy",
     "ticker": "2308",
     "name": "台達電",
-    "shares": 70,
-    "price": 2150,
+    "shares": 69,
+    "price": 2170,
     "note": ""
   },
   {
@@ -50,52 +50,63 @@
     "action": "buy",
     "ticker": "3037",
     "name": "欣興",
-    "shares": 105,
-    "price": 950,
+    "shares": 100,
+    "price": 999,
     "note": ""
   },
   {
     "ai": "claude",
     "week": 2,
-    "date": "2026-06-29",
+    "date": "2026-06-26",
     "action": "sell",
     "ticker": "2308",
     "name": "台達電",
-    "shares": 70,
-    "price": 2000,
+    "shares": 69,
+    "price": 1925,
     "note": ""
   },
   {
     "ai": "claude",
     "week": 2,
-    "date": "2026-06-29",
+    "date": "2026-06-26",
     "action": "buy",
     "ticker": "3037",
     "name": "欣興",
-    "shares": 50,
-    "price": 950,
+    "shares": 150,
+    "price": 1000,
     "note": ""
   },
   {
     "ai": "claude",
     "week": 2,
-    "date": "2026-06-29",
+    "date": "2026-06-26",
     "action": "buy",
     "ticker": "3711",
     "name": "日月光",
-    "shares": 315,
-    "price": 635,
+    "shares": 308,
+    "price": 650,
     "note": ""
   },
   {
     "ai": "claude",
     "week": 2,
-    "date": "2026-06-29",
+    "date": "2026-06-26",
     "action": "sell",
     "ticker": "2382",
     "name": "廣達",
-    "shares": 305,
-    "price": 360,
+    "shares": 385,
+    "price": 362,
+    "note": ""
+  },
+   {
+    "ai": "claude",
+    "week": 2,
+    "date": "2026-06-26",
+    "action": "sell",
+    "ticker": "3017",
+    "name": "奇鋐",
+    "shares": 40,
+    "price": 2475,
     "note": ""
   },
   {
@@ -105,8 +116,8 @@
     "action": "buy",
     "ticker": "2330",
     "name": "台積電",
-    "shares": 125,
-    "price": 2390,
+    "shares": 122,
+    "price": 2455,
     "note": ""
   },
   {
@@ -116,63 +127,63 @@
     "action": "buy",
     "ticker": "2383",
     "name": "台光電",
-    "shares": 35,
-    "price": 5560,
-    "note": ""
-  },
-  {
-    "ai": "gemini",
-    "week": 2,
-    "date": "2026-06-23",
-    "action": "buy",
-    "ticker": "2327",
-    "name": "國巨",
-    "shares": 190,
-    "price": 1050,
-    "note": ""
-  },
-  {
-    "ai": "gemini",
-    "week": 2,
-    "date": "2026-06-23",
-    "action": "buy",
-    "ticker": "6274",
-    "name": "台燿",
-    "shares": 85,
-    "price": 1750,
+    "shares": 34,
+    "price": 5815,
     "note": ""
   },
   {
     "ai": "gemini",
     "week": 1,
-    "date": "2026-06-25",
+    "date": "2026-06-22",
+    "action": "buy",
+    "ticker": "2327",
+    "name": "國巨",
+    "shares": 179,
+    "price": 1115,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 1,
+    "date": "2026-06-22",
+    "action": "buy",
+    "ticker": "6274",
+    "name": "台燿",
+    "shares": 79,
+    "price": 1900,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 1,
+    "date": "2026-06-22",
     "action": "buy",
     "ticker": "2382",
     "name": "廣達",
-    "shares": 405,
-    "price": 370,
+    "shares": 396,
+    "price": 378.5,
     "note": ""
   },
   {
     "ai": "gemini",
     "week": 2,
-    "date": "2026-06-29",
+    "date": "2026-06-26",
     "action": "buy",
     "ticker": "8046",
     "name": "南電",
     "shares": 135,
-    "price": 1100,
+    "price": 1110,
     "note": ""
   },
   {
     "ai": "gemini",
     "week": 2,
-    "date": "2026-06-29",
+    "date": "2026-06-26",
     "action": "sell",
     "ticker": "6274",
     "name": "台燿",
-    "shares": 85,
-    "price": 1750,
+    "shares": 79,
+    "price": 1680,
     "note": ""
   },
   {
@@ -182,14 +193,14 @@
     "action": "buy",
     "ticker": "2330",
     "name": "台積電",
-    "shares": 120,
+    "shares": 122,
     "price": 2455,
     "note": ""
   },
   {
     "ai": "chatgpt",
     "week": 1,
-    "date": "2026-06-24",
+    "date": "2026-06-22",
     "action": "buy",
     "ticker": "3017",
     "name": "奇鋐",
@@ -262,5 +273,17 @@
     "shares": 17,
     "price": 5640,
     "note": ""
-  }
+  },
+  {
+    "ai": "chatgpt",
+    "week": 2,
+    "date": "2026-06-26",
+    "action": "buy",
+    "ticker": "3665",
+    "name": "貿聯-KY",
+    "shares": 53,
+    "price": 1900,
+    "note": ""
+  },
+  
 ]
