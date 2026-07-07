@@ -117,7 +117,11 @@ function buildDateAxis(prices, startDate) {
 }
 
 let scoreboardCharts = [];
-let mainChart = null; 
+let mainChart = null;
+
+if (typeof Chart !== 'undefined') {
+  Chart.defaults.animation = false;
+}
 
 (async function init() {
   setupTabs();
@@ -249,25 +253,20 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
           legend: { display: false },
           tooltip: {
             enabled: true,
+            displayColors: false,
             backgroundColor: 'rgba(255, 244, 214, 0.95)',
             borderColor: '#E8C77E',
             borderWidth: 1,
             padding: 10,
             titleColor: '#1a1a1a',
             titleFont: { weight: '700' },
-            bodyColor: '#2a2a2a',
+            bodyFont: { size: 0 },
             callbacks: {
               title: (items) => {
                 const it = tooltipItems[items[0].dataIndex];
                 return it.ticker === it.name ? it.name : `${it.ticker} ${it.name}`;
               },
-              label: (item) => {
-                const it = tooltipItems[item.dataIndex];
-                const pct = today.value > 0 ? (it.val / today.value) * 100 : 0;
-                const lines = [`投資金額：NT$ ${fmtMoney(it.val)}`, `佔比：${pct.toFixed(1)}%`];
-                if (it.unplPct !== null) lines.push(`報酬率：${fmtPct(it.unplPct)}`);
-                return lines;
-              }
+              label: () => ''
             }
           }
         },

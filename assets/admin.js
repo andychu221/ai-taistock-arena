@@ -323,38 +323,6 @@ async function refreshTxManageList() {
   }
 }
 
-// ---- 週報內容即時預覽(貼上後馬上看到跟前台一樣的 Markdown 渲染效果) ----
-(function setupJournalPreview() {
-  const contentEl = document.getElementById('j-content');
-  const previewEl = document.getElementById('j-preview');
-  if (!contentEl || !previewEl) return;
-
-  function renderPreview() {
-    const raw = contentEl.value || '';
-    if (!raw.trim()) {
-      previewEl.innerHTML = '<span style="color:var(--text-dim)">(尚未輸入內容)</span>';
-      return;
-    }
-    if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
-      previewEl.innerHTML = DOMPurify.sanitize(marked.parse(raw));
-    } else {
-      previewEl.textContent = raw;
-    }
-  }
-
-  contentEl.addEventListener('input', renderPreview);
-  renderPreview();
-
-  // 每次填入表單(編輯既有週報)時也要同步更新預覽
-  const origFillJournalForm = window.fillJournalForm;
-  if (typeof origFillJournalForm === 'function') {
-    window.fillJournalForm = function(record) {
-      origFillJournalForm(record);
-      renderPreview();
-    };
-  }
-})();
-
 // ---- 週報表單：新增 / 編輯 ----
 const journalForm = document.getElementById('journal-form');
 const jEditingIndex = document.getElementById('j-editing-index');
