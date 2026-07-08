@@ -35,6 +35,14 @@
 
     <div class="block">
       <h2><span class="sw"></span>累積報酬走勢</h2>
+      <div class="filters" id="chart-period-filter" style="margin-bottom:12px;">
+        <button type="button" class="btn period-btn" data-period="1D">1日</button>
+        <button type="button" class="btn period-btn" data-period="1W">1週</button>
+        <button type="button" class="btn period-btn" data-period="1M">1月</button>
+        <button type="button" class="btn period-btn" data-period="YTD">年初至今</button>
+        <button type="button" class="btn period-btn" data-period="1Y">1年</button>
+        <button type="button" class="btn period-btn primary" data-period="ALL">成立以來</button>
+      </div>
       <canvas id="chart-main"></canvas>
     </div>
   </section>
