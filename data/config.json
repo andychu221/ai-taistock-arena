@@ -23,6 +23,5 @@
   "sell_fee_rate": 0.001425,
   "sell_tax_rate": 0.003,
   "benchmark_ticker": "00981A",
-  "benchmark_name": "主動統一台股增長",
-  "benchmark": "0050"
+  "benchmark_name": "主動統一台股增長"
 }
