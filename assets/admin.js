@@ -140,7 +140,7 @@ async function loadConfig() {
 
   document.getElementById('cfg-capital').value = CONFIG.initial_capital ?? 1000000;
   document.getElementById('cfg-start-date').value = CONFIG.start_date ?? '';
-  document.getElementById('cfg-benchmark').value = CONFIG.benchmark_ticker ?? '0050';
+  document.getElementById('cfg-benchmark').value = CONFIG.benchmark ?? '0050';
   document.getElementById('cfg-buy-fee').value = CONFIG.buy_fee_rate ?? 0.001425;
   document.getElementById('cfg-sell-fee').value = CONFIG.sell_fee_rate ?? 0.001425;
   document.getElementById('cfg-sell-tax').value = CONFIG.sell_tax_rate ?? 0.003;

@@ -7,6 +7,32 @@ const LOGOS = {
   gemini: getLogoUrl('google.com') // Google 的 G 圖示
 };
 
+// 個股 -> 公司官網網域對照表，用來顯示公司 Logo (與 AI 卡片邏輯一致)
+const TICKER_DOMAINS = {
+  '2059': 'kingslide.com.tw',   // 川湖
+  '2308': 'deltaww.com',        // 台達電
+  '2327': 'yageo.com',          // 國巨
+  '2330': 'tsmc.com',           // 台積電
+  '2382': 'quantatw.com',       // 廣達
+  '2383': 'emc.com.tw',         // 台光電
+  '2449': 'kyec.com.tw',        // 京元電
+  '2454': 'mediatek.com',       // 聯發科
+  '3017': 'avc.co',             // 奇鋐
+  '3037': 'unimicron.com',      // 欣興
+  '3231': 'wistron.com',        // 緯創
+  '3665': 'bizlinktech.com',    // 貿聯-KY
+  '3711': 'aseglobal.com',      // 日月光
+  '6274': 'tuc.com.tw',         // 台燿
+  '8046': 'nanyapcb.com.tw',    // 南電
+  '8210': 'chenbro.com',        // 勤誠
+};
+function getTickerIconHtml(ticker, size) {
+  const domain = TICKER_DOMAINS[ticker];
+  const px = size || 18;
+  if (!domain) return '';
+  return `<img src="${getLogoUrl(domain)}" alt="${ticker}" style="width:${px}px;height:${px}px;object-fit:contain;border-radius:4px;vertical-align:middle;" onerror="this.style.display='none'">`;
+}
+
 // 安全抓取 JSON，防止 404 網頁導致 Safari 拋出 SyntaxError
 async function fetchSafeJson(url, fallback) {
   try {
@@ -38,7 +64,7 @@ function fmtMoney(n) { return Math.round(n).toLocaleString('zh-Hant-TW'); }
 function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
 
 function getIconHtml(aiId) { 
-  return LOGOS[aiId] ? `<img src="${LOGOS[aiId]}" alt="${aiId}">` : ''; 
+  return LOGOS[aiId] ? `<img src="${LOGOS[aiId]}" alt="${aiId}" onerror="this.style.display='none'">` : ''; 
 }
 
 function getPriceVal(p) { return (typeof p === 'object' && p !== null) ? p.close : p; }
@@ -199,7 +225,7 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
       dataLabels.push(ticker);
       dataValues.push(val);
       pieColors.push(bgColors[colorIdx % bgColors.length]);
-      tooltipItems.push({ ticker, name: txName, val, unplPct });
+      tooltipItems.push({ ticker, name: txName, val, unplPct, price: curPrice });
       colorIdx++;
     });
     
@@ -207,10 +233,13 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
     const unrealizedPct = totalCost > 0 ? (unrealizedAmt / totalCost) * 100 : 0;
     const unrealizedUp = unrealizedAmt >= 0;
 
+    // 現金 = NAV(當前總資產) - 持股市值加總，確保圓餅圖與總資產永遠對得起來，理論上不會是負值
+    const derivedCash = Math.max(0, today.value - stockValueSum);
+
     dataLabels.push('現金');
-    dataValues.push(today.cash);
+    dataValues.push(derivedCash);
     pieColors.push('#262626');
-    tooltipItems.push({ ticker: '現金', name: '現金', val: today.cash, unplPct: null });
+    tooltipItems.push({ ticker: '現金', name: '現金', val: derivedCash, unplPct: null, price: null });
 
     el.insertAdjacentHTML('beforeend', `
       <div class="card">
@@ -222,7 +251,7 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
               <span class="name">${ai.name}</span>
             </div>
             <div class="value-big mono">NT$ ${fmtMoney(today.value)}</div>
-            <div class="ret ${unrealizedUp ? 'up' : 'down'} mono">
+            <div class="ret ${dailyUp ? 'up' : 'down'} mono">
               未實現 P&L: ${fmtMoney(unrealizedAmt)} / ${fmtPct(unrealizedPct)}
             </div>
             <div class="ret ${totalPlUp ? 'up' : 'down'} mono" style="margin-top:4px; font-size:12px;">
@@ -254,19 +283,23 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
           tooltip: {
             enabled: true,
             displayColors: false,
-            backgroundColor: 'rgba(255, 244, 214, 0.95)',
+            backgroundColor: '#FFF3CD',
             borderColor: '#E8C77E',
             borderWidth: 1,
             padding: 10,
             titleColor: '#1a1a1a',
             titleFont: { weight: '700' },
-            bodyFont: { size: 0 },
+            bodyColor: '#3a3a2a',
+            bodyFont: { size: 12 },
             callbacks: {
               title: (items) => {
                 const it = tooltipItems[items[0].dataIndex];
                 return it.ticker === it.name ? it.name : `${it.ticker} ${it.name}`;
               },
-              label: () => ''
+              label: (item) => {
+                const it = tooltipItems[item.dataIndex];
+                return it.price != null ? `最新股價：NT$ ${it.price.toLocaleString('zh-Hant-TW')}` : '';
+              }
             }
           }
         },
@@ -275,6 +308,88 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
       }
     }));
   });
+}
+
+// ---- 累積報酬圖：終點 Logo + 數據標籤 ----
+const logoImgCache = {};
+function getLogoImg(aiId) {
+  if (!LOGOS[aiId]) return null;
+  if (!logoImgCache[aiId]) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => { if (mainChart) mainChart.draw(); };
+    img.src = LOGOS[aiId];
+    logoImgCache[aiId] = img;
+  }
+  return logoImgCache[aiId];
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function makeEndpointLabelPlugin(config) {
+  return {
+    id: 'endpointLabel',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      chart.data.datasets.forEach((ds, i) => {
+        const meta = chart.getDatasetMeta(i);
+        if (meta.hidden || !meta.data || meta.data.length === 0) return;
+        const lastPoint = meta.data[meta.data.length - 1];
+        const lastVal = Number(ds.data[ds.data.length - 1]);
+        const text = `${lastVal >= 0 ? '+' : ''}${lastVal}%`;
+        const color = ds.borderColor;
+        const x = lastPoint.x;
+        const y = lastPoint.y;
+        const aiMatch = config.ais.find(a => a.name === ds.label);
+
+        ctx.save();
+
+        // 終點 Logo(僅限 AI 資產)
+        if (aiMatch) {
+          const img = getLogoImg(aiMatch.id);
+          const logoSize = 18;
+          if (img && img.complete && img.naturalWidth > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, logoSize / 2 + 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#000';
+            ctx.fill();
+            ctx.clip();
+            ctx.drawImage(img, x - logoSize / 2, y - logoSize / 2, logoSize, logoSize);
+            ctx.restore();
+          }
+        }
+
+        // 終點數據標籤(色底白字)
+        ctx.font = '700 11px Inter, sans-serif';
+        const textWidth = ctx.measureText(text).width;
+        const padX = 7;
+        const pillW = textWidth + padX * 2;
+        const pillH = 18;
+        const pillX = x + 14;
+        const pillY = y - pillH / 2;
+
+        ctx.fillStyle = color;
+        roundRect(ctx, pillX, pillY, pillW, pillH, 9);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'left';
+        ctx.fillText(text, pillX + padX, pillY + pillH / 2 + 1);
+
+        ctx.restore();
+      });
+    }
+  };
 }
 
 function renderChart(config, dates, seriesByAI, bmSeries) {
@@ -296,9 +411,9 @@ function renderChart(config, dates, seriesByAI, bmSeries) {
     datasets.push({
       label: `${config.benchmark_ticker}`,
       data: bmSeries.map(p => (((p.value - config.initial_capital) / config.initial_capital) * 100).toFixed(2)),
-      borderColor: '#FF3B30', 
+      borderColor: '#9CA3AF', 
       backgroundColor: 'transparent', 
-      //borderDash: [5, 5],
+      borderDash: [5, 5],
       borderWidth: 1.5, 
       pointRadius: 0, tension: 0.25,
     });
@@ -306,9 +421,11 @@ function renderChart(config, dates, seriesByAI, bmSeries) {
 
   mainChart = new Chart(ctx, {
     type: 'line', data: { labels: dates, datasets },
+    plugins: [makeEndpointLabelPlugin(config)],
     options: {
       responsive: true,
       interaction: { mode: 'index', intersect: false },
+      layout: { padding: { right: 74, top: 12 } },
       plugins: { 
         legend: { labels: { color: '#FFFFFF' } }, 
         tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.formattedValue}%` } } 
@@ -394,7 +511,7 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
 
         legendRows += `
           <tr>
-            <td><span class="color-box" style="background:${cStr}"></span><span class="mono">${td.ticker}</span> ${td.txName}</td>
+            <td><span class="color-box" style="background:${cStr}"></span>${getTickerIconHtml(td.ticker, 16)} <span class="mono">${td.ticker}</span> ${td.txName}</td>
             <td class="mono" style="text-align:right">${fmtMoney(td.val)}</td>
             <td class="mono" style="text-align:right">${pctOfPort.toFixed(1)}%</td>
             <td class="mono" style="text-align:right; color:${up?'var(--up)':'var(--down)'}">${fmtPct(td.unplPct)}</td>
@@ -406,14 +523,17 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
       const unrealizedPct = totalCost > 0 ? (unrealizedAmt / totalCost) * 100 : 0;
       const unrealizedUp = unrealizedAmt >= 0;
 
+      // 現金 = NAV - 持股市值加總，理論上不應為負
+      const derivedCash = Math.max(0, snap.value - stockValueSum);
+
       dataLabels.push('現金');
-      dataValues.push(snap.cash);
-      barDataValues.push(snap.cash / 10000);
-      const cashPct = (snap.cash / snap.value) * 100;
+      dataValues.push(derivedCash);
+      barDataValues.push(derivedCash / 10000);
+      const cashPct = snap.value > 0 ? (derivedCash / snap.value) * 100 : 0;
       legendRows += `
           <tr>
             <td><span class="color-box" style="background:#262626"></span>現金</td>
-            <td class="mono" style="text-align:right">${fmtMoney(snap.cash)}</td>
+            <td class="mono" style="text-align:right">${fmtMoney(derivedCash)}</td>
             <td class="mono" style="text-align:right">${cashPct.toFixed(1)}%</td>
             <td class="mono" style="text-align:right">-</td>
           </tr>
@@ -425,11 +545,11 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
         <div class="card-head" style="justify-content:center">
           <span style="color:${ai.color}; display:flex; align-items:center;">${getIconHtml(ai.id)}</span> <span class="name">${ai.name} 投資組合</span>
         </div>
-        <div style="position:relative; width:100%; height:220px; margin:0 auto;">
+        <div class="donut-wrap" style="position:relative; width:100%; height:220px; margin:0 auto;">
           <canvas id="donut-${ai.id}"></canvas>
           <div class="donut-center-text">
             <div class="lbl">未實現 P&amp;L</div>
-            <div class="val mono" style="color:${unrealizedUp ? 'var(--up)' : 'var(--down)'}">
+            <div class="val mono" style="color:#fff; font-size:20px; font-weight:800;">
               ${fmtMoney(unrealizedAmt)}<br/>${fmtPct(unrealizedPct)}
             </div>
           </div>
@@ -476,8 +596,8 @@ function renderHoldingsView(config, seriesByAI, prices, transactions) {
             tooltip: { callbacks: { label: c => c.formattedValue + ' 萬' } }
           }, 
           scales: { 
-            x: { ticks: { color: '#9CA3AF' }, grid: { display:false } }, 
-            y: { ticks: { color: '#9CA3AF' }, grid: { color: '#262626' } } 
+            x: { ticks: { color: '#FFFFFF' }, grid: { display:false } }, 
+            y: { ticks: { color: '#FFFFFF' }, grid: { color: '#262626' } } 
           } 
         }
       }));
@@ -577,7 +697,7 @@ function renderTransactions(config, transactions) {
         <td><span class="ai-tag" style="color:${aiInfo?.color}; display:flex; align-items:center; gap:6px;">${icon} ${t.ai}</span></td>
         <td class="mono">${t.week ?? '-'}</td>
         <td><span class="pill ${t.action}">${t.action === 'buy' ? '買進' : '賣出'}</span></td>
-        <td class="mono">${t.ticker} ${t.name || ''}</td>
+        <td class="mono"><span style="display:inline-flex;align-items:center;gap:6px;">${getTickerIconHtml(t.ticker)} ${t.ticker} ${t.name || ''}</span></td>
         <td class="mono">${t.shares}</td>
         <td class="mono">${t.price}</td>
         <td class="mono">${fmtMoney(t.amount)}</td>
@@ -652,6 +772,14 @@ function setupTabs() {
       document.querySelectorAll('main > section').forEach(s => s.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(btn.dataset.tab).classList.add('active');
+
+      // 修正：圖表若是在隱藏(display:none)的分頁中建立，Chart.js 量測畫布尺寸會失敗，
+      // 導致圖表顯示不出來(尤其常見於 Windows Chrome)。切換分頁後強制重新計算尺寸。
+      requestAnimationFrame(() => {
+        if (typeof Chart !== 'undefined' && Chart.instances) {
+          Object.values(Chart.instances).forEach(c => { try { c.resize(); } catch (e) {} });
+        }
+      });
     });
   });
 }

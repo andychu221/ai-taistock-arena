@@ -106,10 +106,11 @@ section.active{ display:block; }
 .ret.down{ color: var(--down); }
 .donut-center-text{
   position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
-  text-align:center; pointer-events:none; width: 85%;
+  text-align:center; pointer-events:none; width: 85%; z-index:1;
 }
 .donut-center-text .lbl{ font-size:10px; color:var(--text-dim); }
 .donut-center-text .val{ font-size:16px; font-weight:700; margin-top:2px; }
+.sb-right canvas, .donut-wrap canvas{ position:relative; z-index:2; }
 
 /* generic block */
 .block{ background: var(--surface); border:1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
