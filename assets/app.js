@@ -222,7 +222,7 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
               <span class="name">${ai.name}</span>
             </div>
             <div class="value-big mono">NT$ ${fmtMoney(today.value)}</div>
-            <div class="ret ${dailyUp ? 'up' : 'down'} mono">
+            <div class="ret ${unrealizedUp ? 'up' : 'down'} mono">
               未實現 P&L: ${fmtMoney(unrealizedAmt)} / ${fmtPct(unrealizedPct)}
             </div>
             <div class="ret ${totalPlUp ? 'up' : 'down'} mono" style="margin-top:4px; font-size:12px;">
