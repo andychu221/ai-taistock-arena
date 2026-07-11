@@ -7,14 +7,12 @@ const LOGOS = {
   gemini: getLogoUrl('google.com') // Google 的 G 圖示
 };
 
-// Benchmark 固定寫死 4 檔，前台可直接切換，不需要在後台管理設定
-// 這裡不用第三方 logo 圖片(元大/統一證的官方 logo 文字很多、且小型網域不一定查得到)，
-// 改成自己畫的「色塊 + 兩個字」標記，保證任何情況下都清楚可辨、不會有載入失敗的問題。
+
 const BENCHMARKS = [
-  { ticker: '2330',   name: '台積電',        mark: '台積', color: '#0466C8' },
-  { ticker: '0050',   name: '元大台灣50',    mark: '元大', color: '#D62839' },
-  { ticker: '00631L', name: '元大台灣50正2', mark: '元大', color: '#D62839' },
-  { ticker: '00981A', name: '統一台股增長',  mark: '統一', color: '#F77F00' },
+  { ticker: '2330',   name: '台積電',        domain: 'tsmc.com' },       // 台積電
+  { ticker: '0050',   name: '元大台灣50',    domain: 'yuanta.com' },  // 元大證券
+  { ticker: '00631L', name: '元大台灣50正2', domain: 'yuanta.com' },  // 元大證券
+  { ticker: '00981A', name: '統一台股增長',  domain: 'uni-president.com' },  // 統一證券
 ];
 
 // 安全抓取 JSON，防止 404 網頁導致 Safari 拋出 SyntaxError
@@ -275,7 +273,7 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
               <span class="name">${ai.name}</span>
             </div>
             <div class="value-big mono">NT$ ${fmtMoney(today.value)}</div>
-            <div class="ret ${dailyUp ? 'up' : 'down'} mono">
+            <div class="ret ${unrealizedUp ? 'up' : 'down'} mono">
               未實現 P&L: ${fmtMoney(unrealizedAmt)} / ${fmtPct(unrealizedPct)}
             </div>
             <div class="ret ${totalPlUp ? 'up' : 'down'} mono" style="margin-top:4px; font-size:12px;">
@@ -345,8 +343,9 @@ function getImgByUrl(url) {
   return imgCache[url];
 }
 function getLogoImg(aiId) { return getImgByUrl(LOGOS[aiId]); }
-// 頁面載入時就先預熱 AI 的 logo 圖片，讓走勢圖第一次畫出來時 logo 大機率已經就緒
+// 頁面載入時就先預熱 AI 與 Benchmark 的 logo 圖片，讓走勢圖第一次畫出來時 logo 大機率已經就緒
 Object.keys(LOGOS).forEach(aiId => getLogoImg(aiId));
+BENCHMARKS.forEach(b => getImgByUrl(getLogoUrl(b.domain)));
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -391,19 +390,6 @@ function makeEndpointLabelPlugin() {
           ctx.fill();
           ctx.clip();
           ctx.drawImage(img, cursorX, centerY - logoSize / 2, logoSize, logoSize);
-          ctx.restore();
-          cursorX += logoSize + gap;
-        } else if (ds._badge) {
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(cursorX + logoSize / 2, centerY, logoSize / 2 + 2, 0, Math.PI * 2);
-          ctx.fillStyle = ds._badge.color;
-          ctx.fill();
-          ctx.fillStyle = '#FFFFFF';
-          ctx.font = '700 8px "Noto Sans TC", "PingFang TC", sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(ds._badge.mark, cursorX + logoSize / 2, centerY + 0.5);
           ctx.restore();
           cursorX += logoSize + gap;
         }
@@ -488,7 +474,7 @@ function renderChart(config, dates, seriesByAI, prices) {
         borderDash: [5, 5],
         borderWidth: 1.5,
         pointRadius: 0, tension: 0.25,
-        _badge: { mark: bmMeta.mark, color: bmMeta.color },
+        _logoUrl: getLogoUrl(bmMeta.domain)
       });
     }
 
