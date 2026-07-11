@@ -7,6 +7,14 @@ const LOGOS = {
   gemini: getLogoUrl('google.com') // Google 的 G 圖示
 };
 
+// Benchmark 固定寫死 4 檔，前台可直接切換，不需要在後台管理設定
+const BENCHMARKS = [
+  { ticker: '2330',   name: '台積電',        domain: 'tsmc.com' },       // 台積電
+  { ticker: '0050',   name: '元大台灣50',    domain: 'yuanta.com.tw' },  // 元大證券
+  { ticker: '00631L', name: '元大台灣50正2', domain: 'yuanta.com.tw' },  // 元大證券
+  { ticker: '00981A', name: '統一台股增長',  domain: 'pscnet.com.tw' },  // 統一證券
+];
+
 // 安全抓取 JSON，防止 404 網頁導致 Safari 拋出 SyntaxError
 async function fetchSafeJson(url, fallback) {
   try {
@@ -143,13 +151,8 @@ if (typeof Chart !== 'undefined') {
     seriesByAI[ai.id] = computeSeries(ai.id, transactions, prices, dates, config);
   });
   
-  let bmSeries = [];
-  if (config.benchmark_ticker && prices[config.benchmark_ticker]) {
-     bmSeries = computeBenchmarkSeries(prices, config.benchmark_ticker, dates, config.initial_capital);
-  }
-
   safeRun(() => renderScoreboard(config, seriesByAI, prices, transactions));
-  safeRun(() => renderChart(config, dates, seriesByAI, bmSeries));
+  safeRun(() => renderChart(config, dates, seriesByAI, prices));
   safeRun(() => renderHoldingsView(config, seriesByAI, prices, transactions));
   safeRun(() => renderTransactions(config, transactions));
   safeRun(() => renderJournal(config, journal));
@@ -320,23 +323,26 @@ function renderScoreboard(config, seriesByAI, prices, transactions) {
 }
 
 // ---- 累積報酬圖：終點 Logo + 數據標籤 ----
-const logoImgCache = {};
-function getLogoImg(aiId) {
-  if (!LOGOS[aiId]) return null;
-  if (!logoImgCache[aiId]) {
+// 用「圖片網址」當 key 的共用快取，AI 和 Benchmark 的 logo 都能共用同一套繪製邏輯
+const imgCache = {};
+function getImgByUrl(url) {
+  if (!url) return null;
+  if (!imgCache[url]) {
     const img = new Image();
     // 注意：這裡故意不設定 crossOrigin，因為 getlogo.dev 不一定會回傳 CORS header，
     // 設定 crossOrigin='anonymous' 反而可能導致圖片載入失敗(靜默失敗、logo消失不見)。
     // 我們只需要把圖畫上 canvas，不需要用 getImageData/toDataURL 讀取像素，所以不需要 CORS。
     img.onload = () => { if (mainChart) mainChart.draw(); };
     img.onerror = () => { /* 載入失敗就不畫 logo，仍保留百分比標籤 */ };
-    img.src = LOGOS[aiId];
-    logoImgCache[aiId] = img;
+    img.src = url;
+    imgCache[url] = img;
   }
-  return logoImgCache[aiId];
+  return imgCache[url];
 }
-// 頁面載入時就先預熱三個 AI 的 logo 圖片，讓走勢圖第一次畫出來時 logo 大機率已經就緒
+function getLogoImg(aiId) { return getImgByUrl(LOGOS[aiId]); }
+// 頁面載入時就先預熱 AI 與 Benchmark 的 logo 圖片，讓走勢圖第一次畫出來時 logo 大機率已經就緒
 Object.keys(LOGOS).forEach(aiId => getLogoImg(aiId));
+BENCHMARKS.forEach(b => getImgByUrl(getLogoUrl(b.domain)));
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -348,7 +354,7 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-function makeEndpointLabelPlugin(config) {
+function makeEndpointLabelPlugin() {
   return {
     id: 'endpointLabel',
     afterDatasetsDraw(chart) {
@@ -362,7 +368,6 @@ function makeEndpointLabelPlugin(config) {
         const color = ds.borderColor;
         const x = lastPoint.x;
         const y = lastPoint.y;
-        const aiMatch = config.ais.find(a => a.name === ds.label);
         const logoSize = 18;
         const gap = 6;
 
@@ -372,20 +377,18 @@ function makeEndpointLabelPlugin(config) {
         let cursorX = x + 8;
         const centerY = y;
 
-        // 終點 Logo(僅限 AI 資產，放在百分比標籤「前面」)
-        if (aiMatch) {
-          const img = getLogoImg(aiMatch.id);
-          if (img && img.complete && img.naturalWidth > 0) {
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(cursorX + logoSize / 2, centerY, logoSize / 2 + 2, 0, Math.PI * 2);
-            ctx.fillStyle = '#0d0d0d';
-            ctx.fill();
-            ctx.clip();
-            ctx.drawImage(img, cursorX, centerY - logoSize / 2, logoSize, logoSize);
-            ctx.restore();
-            cursorX += logoSize + gap;
-          }
+        // 終點 Logo(AI 模型 或 Benchmark 都適用，放在百分比標籤「前面」)
+        const img = getImgByUrl(ds._logoUrl);
+        if (img && img.complete && img.naturalWidth > 0) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(cursorX + logoSize / 2, centerY, logoSize / 2 + 2, 0, Math.PI * 2);
+          ctx.fillStyle = '#0d0d0d';
+          ctx.fill();
+          ctx.clip();
+          ctx.drawImage(img, cursorX, centerY - logoSize / 2, logoSize, logoSize);
+          ctx.restore();
+          cursorX += logoSize + gap;
         }
 
         // 終點數據標籤(色底白字)，緊接在 logo 後面
@@ -428,9 +431,11 @@ function getPeriodStartIndex(dates, period) {
   return idx === -1 ? 0 : idx;
 }
 
-function renderChart(config, dates, seriesByAI, bmSeries) {
+function renderChart(config, dates, seriesByAI, prices) {
   const ctx = document.getElementById('chart-main');
   if (typeof Chart === 'undefined') return;
+
+  let currentBenchmark = (BENCHMARKS.find(b => b.ticker === config.benchmark_ticker) || BENCHMARKS[1]).ticker;
 
   function draw(period) {
     if (mainChart) mainChart.destroy();
@@ -449,26 +454,30 @@ function renderChart(config, dates, seriesByAI, bmSeries) {
         backgroundColor: ai.color, // 安全的 6 碼實色
         borderWidth: 2,
         pointRadius: 0, tension: 0.25,
+        _logoUrl: LOGOS[ai.id] || null,
       };
     });
 
-    if (bmSeries && bmSeries.length > 0) {
-      const bmSlice = bmSeries.slice(startIdx);
+    const bmMeta = BENCHMARKS.find(b => b.ticker === currentBenchmark);
+    if (bmMeta && prices[bmMeta.ticker]) {
+      const bmSeriesFull = computeBenchmarkSeries(prices, bmMeta.ticker, dates, config.initial_capital);
+      const bmSlice = bmSeriesFull.slice(startIdx);
       const bmBase = rebase ? bmSlice[0].value : config.initial_capital;
       datasets.push({
-        label: `${config.benchmark_name || config.benchmark_ticker}`,
+        label: bmMeta.name,
         data: bmSlice.map(p => (((p.value - bmBase) / bmBase) * 100).toFixed(2)),
         borderColor: '#EF4444', // Benchmark 固定用紅色
         backgroundColor: 'transparent',
         borderDash: [5, 5],
         borderWidth: 1.5,
         pointRadius: 0, tension: 0.25,
+        _logoUrl: getLogoUrl(bmMeta.domain),
       });
     }
 
     mainChart = new Chart(ctx, {
       type: 'line', data: { labels: viewDates, datasets },
-      plugins: [makeEndpointLabelPlugin(config)],
+      plugins: [makeEndpointLabelPlugin()],
       options: {
         responsive: true,
         interaction: { mode: 'index', intersect: false },
@@ -495,6 +504,20 @@ function renderChart(config, dates, seriesByAI, bmSeries) {
       });
     });
     periodBar.dataset.bound = '1';
+  }
+
+  const bmBar = document.getElementById('chart-benchmark-filter');
+  if (bmBar && !bmBar.dataset.bound) {
+    bmBar.querySelectorAll('.benchmark-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        bmBar.querySelectorAll('.benchmark-btn').forEach(b => b.classList.remove('primary'));
+        btn.classList.add('primary');
+        currentBenchmark = btn.dataset.benchmark;
+        const activePeriodBtn = periodBar ? periodBar.querySelector('.period-btn.primary') : null;
+        draw(activePeriodBtn ? activePeriodBtn.dataset.period : 'ALL');
+      });
+    });
+    bmBar.dataset.bound = '1';
   }
 
   draw('ALL');

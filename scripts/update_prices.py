@@ -25,9 +25,16 @@ def main():
     prices = load_json("data/prices.json", {})
 
     tickers = {t["ticker"] for t in transactions if isinstance(t, dict) and t.get("ticker")}
-    benchmark = config.get("benchmark_ticker", "0050")
-    if benchmark:
-        tickers.add(benchmark)
+
+    # Benchmark 前台固定寫死 4 檔（2330 / 0050 / 00631L / 00981A），每次更新都一併抓取，
+    # 這樣前台的 Benchmark 切換按鈕才會一直有資料可用。
+    fixed_benchmarks = ["2330", "0050", "00631L", "00981A"]
+    tickers.update(fixed_benchmarks)
+
+    # 相容舊版設定：如果 config.json 裡還有寫 benchmark_ticker，也一併納入
+    legacy_benchmark = config.get("benchmark_ticker") or config.get("benchmark")
+    if legacy_benchmark:
+        tickers.add(legacy_benchmark)
         
     if not tickers:
         print("沒有需要更新的股票。")
