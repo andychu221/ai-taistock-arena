@@ -416,5 +416,16 @@
     "shares": 140,
     "price": 1075,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 4,
+    "date": "2026-07-13",
+    "action": "sell",
+    "ticker": "3017",
+    "name": "奇鋐",
+    "shares": 308,
+    "price": 2350,
+    "note": ""
   }
 ]
