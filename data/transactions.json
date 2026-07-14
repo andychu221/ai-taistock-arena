@@ -482,5 +482,16 @@
     "shares": 25,
     "price": 8000,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 4,
+    "date": "2026-07-13",
+    "action": "buy",
+    "ticker": "3711",
+    "name": "日月光",
+    "shares": 220,
+    "price": 665,
+    "note": ""
   }
 ]
