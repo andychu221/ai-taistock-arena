@@ -567,8 +567,8 @@
     "action": "sell",
     "ticker": "3711",
     "name": "日月光",
-    "shares":7 ,
-    "price":600 ,
+    "shares": 7,
+    "price": 600,
     "note": ""
   },
   {
@@ -578,7 +578,7 @@
     "action": "sell",
     "ticker": "2408",
     "name": "南亞科",
-    "shares":350,
+    "shares": 350,
     "price": 396,
     "note": ""
   },
@@ -589,8 +589,8 @@
     "action": "sell",
     "ticker": "3037",
     "name": "欣興",
-    "shares":100 ,
-    "price": 778 ,
+    "shares": 100,
+    "price": 778,
     "note": ""
   },
   {
@@ -601,7 +601,7 @@
     "ticker": "2317",
     "name": "鴻海",
     "shares": 1050,
-    "price": 236 ,
+    "price": 236,
     "note": ""
   },
   {
@@ -611,8 +611,8 @@
     "action": "buy",
     "ticker": "6505",
     "name": "台塑化",
-    "shares":2080 ,
-    "price":8  ,
+    "shares": 2080,
+    "price": 8,
     "note": ""
   },
   {
@@ -623,7 +623,7 @@
     "ticker": "6488",
     "name": "環球晶",
     "shares": 155,
-    "price": 1270 ,
+    "price": 1270,
     "note": ""
   },
   {
@@ -655,9 +655,19 @@
     "action": "buy",
     "ticker": "2886",
     "name": "兆豐金",
-    "shares":3130 ,
+    "shares": 3130,
     "price": 47.8,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 5,
+    "date": "2026-07-20",
+    "action": "sell",
+    "ticker": "8046",
+    "name": "南電",
+    "shares": 135,
+    "price": 1130,
+    "note": ""
   }
-  
 ]
