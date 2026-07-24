@@ -537,5 +537,16 @@
     "shares": 25,
     "price": 5540,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 5,
+    "date": "2026-07-20",
+    "action": "buy",
+    "ticker": "6515",
+    "name": "穎崴",
+    "shares": 25,
+    "price": 6100,
+    "note": ""
   }
 ]
