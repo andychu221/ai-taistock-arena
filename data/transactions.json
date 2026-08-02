@@ -746,5 +746,16 @@
     "shares": 21,
     "price": 7780,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 6,
+    "date": "2026-07-27",
+    "action": "buy",
+    "ticker": "2368",
+    "name": "金像電",
+    "shares": 200,
+    "price": 905,
+    "note": ""
   }
 ]
