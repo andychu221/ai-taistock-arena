@@ -757,5 +757,16 @@
     "shares": 200,
     "price": 905,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 6,
+    "date": "2026-07-27",
+    "action": "sell",
+    "ticker": "1216",
+    "name": "統一",
+    "shares": 1870,
+    "price": 78.7,
+    "note": ""
   }
 ]
