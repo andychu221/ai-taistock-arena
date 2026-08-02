@@ -713,5 +713,16 @@
     "shares": 1100,
     "price": 180,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 6,
+    "date": "2026-07-27",
+    "action": "sell",
+    "ticker": "6488",
+    "name": "環球晶",
+    "shares": 155,
+    "price": 1030,
+    "note": ""
   }
 ]
