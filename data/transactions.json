@@ -735,5 +735,16 @@
     "shares": 25,
     "price": 3655,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 6,
+    "date": "2026-07-27",
+    "action": "sell",
+    "ticker": "2059",
+    "name": "川湖",
+    "shares": 21,
+    "price": 7780,
+    "note": ""
   }
 ]
