@@ -867,5 +867,16 @@
     "shares": 245,
     "price": 610,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 7,
+    "date": "2026-08-03",
+    "action": "buy",
+    "ticker": "3017",
+    "name": "奇鋐",
+    "shares": 60,
+    "price": 2530,
+    "note": ""
   }
 ]
