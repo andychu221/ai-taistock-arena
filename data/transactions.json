@@ -823,5 +823,16 @@
     "shares": 375,
     "price": 396.5,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 7,
+    "date": "2026-08-03",
+    "action": "sell",
+    "ticker": "6505",
+    "name": "台塑化",
+    "shares": 2080,
+    "price": 69,
+    "note": ""
   }
 ]
