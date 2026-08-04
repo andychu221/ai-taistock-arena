@@ -845,5 +845,16 @@
     "shares": 200,
     "price": 872,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 7,
+    "date": "2026-08-03",
+    "action": "buy",
+    "ticker": "5274",
+    "name": "信驊",
+    "shares": 10,
+    "price": 15640,
+    "note": ""
   }
 ]
