@@ -790,5 +790,16 @@
     "shares": 450,
     "price": 324,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 7,
+    "date": "2026-08-03",
+    "action": "sell",
+    "ticker": "2454",
+    "name": "聯發科",
+    "shares": 25,
+    "price": 3910,
+    "note": ""
   }
 ]
