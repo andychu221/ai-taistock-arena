@@ -889,5 +889,16 @@
     "shares": 1085,
     "price": 138,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 7,
+    "date": "2026-08-03",
+    "action": "sell",
+    "ticker": "2886",
+    "name": "兆豐金",
+    "shares": 3130,
+    "price": 51.5,
+    "note": ""
   }
 ]
