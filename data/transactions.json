@@ -933,5 +933,16 @@
     "shares": 10,
     "price": 11800,
     "note": ""
-  
+  },
+  {
+    "ai": "claude",
+    "week": 8,
+    "date": "2026-08-10",
+    "action": "sell",
+    "ticker": "2408",
+    "name": "南亞科",
+    "shares": 375,
+    "price": 489,
+    "note": ""
+  }
 ]
