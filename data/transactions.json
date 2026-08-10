@@ -944,5 +944,16 @@
     "shares": 375,
     "price": 489,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 8,
+    "date": "2026-08-10",
+    "action": "buy",
+    "ticker": "2345",
+    "name": "智邦",
+    "shares": 85,
+    "price": 2255,
+    "note": ""
   }
 ]
