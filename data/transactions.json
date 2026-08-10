@@ -901,7 +901,7 @@
     "price": 51.5,
     "note": ""
   },
-    {
+  {
     "ai": "gemini",
     "week": 8,
     "date": "2026-08-10",
@@ -910,6 +910,17 @@
     "name": "聯發科",
     "shares": 50,
     "price": 3920,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 8,
+    "date": "2026-08-10",
+    "action": "buy",
+    "ticker": "2308",
+    "name": "台達電",
+    "shares": 110,
+    "price": 1695,
     "note": ""
   }
 ]
