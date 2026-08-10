@@ -966,5 +966,16 @@
     "shares": 30,
     "price": 6215,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 8,
+    "date": "2026-08-10",
+    "action": "sell",
+    "ticker": "6515",
+    "name": "",
+    "shares": 25,
+    "price": 6980,
+    "note": ""
   }
 ]
