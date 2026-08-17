@@ -1087,5 +1087,16 @@
     "shares": 25,
     "price": 5800,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 9,
+    "date": "2026-08-17",
+    "action": "buy",
+    "ticker": "2308",
+    "name": "台達電",
+    "shares": 100,
+    "price": 1950,
+    "note": ""
   }
 ]
