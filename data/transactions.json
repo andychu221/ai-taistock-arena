@@ -1076,5 +1076,16 @@
     "shares": 25,
     "price": 6200,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 9,
+    "date": "2026-08-17",
+    "action": "sell",
+    "ticker": "6223",
+    "name": "旺矽",
+    "shares": 25,
+    "price": 5800,
+    "note": ""
   }
 ]
