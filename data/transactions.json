@@ -1131,5 +1131,16 @@
     "shares": 65,
     "price": 2300,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 9,
+    "date": "2026-08-17",
+    "action": "sell",
+    "ticker": "3711",
+    "name": "日月光",
+    "shares": 245,
+    "price": 625,
+    "note": ""
   }
 ]
