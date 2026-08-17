@@ -999,5 +999,16 @@
     "shares": 160,
     "price": 626,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 9,
+    "date": "2026-08-17",
+    "action": "sell",
+    "ticker": "33231",
+    "name": "緯創",
+    "shares": 1100,
+    "price": 191,
+    "note": ""
   }
 ]
