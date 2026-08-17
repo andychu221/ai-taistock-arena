@@ -1010,5 +1010,16 @@
     "shares": 1100,
     "price": 191,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 9,
+    "date": "2026-08-17",
+    "action": "sell",
+    "ticker": "2317",
+    "name": "鴻海",
+    "shares": 1050,
+    "price": 259,
+    "note": ""
   }
 ]
