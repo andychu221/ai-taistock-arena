@@ -1065,5 +1065,16 @@
     "shares": 1100,
     "price": 191,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 9,
+    "date": "2026-08-17",
+    "action": "sell",
+    "ticker": "2383",
+    "name": "台光電",
+    "shares": 25,
+    "price": 6200,
+    "note": ""
   }
 ]
