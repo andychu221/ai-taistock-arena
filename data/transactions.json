@@ -1219,5 +1219,16 @@
     "shares": 100,
     "price": 1720,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 10,
+    "date": "2026-08-24",
+    "action": "sell",
+    "ticker": "6669",
+    "name": "緯穎",
+    "shares": 30,
+    "price": 6300,
+    "note": ""
   }
 ]
