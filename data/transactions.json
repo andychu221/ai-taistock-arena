@@ -1186,5 +1186,16 @@
     "shares": 35,
     "price": 5280,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 10,
+    "date": "2026-08-24",
+    "action": "buy",
+    "ticker": "3081",
+    "name": "聯亞",
+    "shares": 50,
+    "price": 2910,
+    "note": ""
   }
 ]
