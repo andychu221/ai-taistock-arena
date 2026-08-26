@@ -1175,5 +1175,16 @@
     "shares": 50,
     "price": 3800,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 10,
+    "date": "2026-08-24",
+    "action": "buy",
+    "ticker": "3653",
+    "name": "健策",
+    "shares": 35,
+    "price": 5280,
+    "note": ""
   }
 ]
