@@ -1142,5 +1142,16 @@
     "shares": 380,
     "price": 519,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 10,
+    "date": "2026-08-26",
+    "action": "buy",
+    "ticker": "3443",
+    "name": "創意",
+    "shares": 25,
+    "price": 5635,
+    "note": ""
   }
 ]
