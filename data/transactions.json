@@ -1285,5 +1285,16 @@
     "shares": 60,
     "price": 2865,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 10,
+    "date": "2026-08-24",
+    "action": "buy",
+    "ticker": "3533",
+    "name": "嘉澤",
+    "shares": 90,
+    "price": 1615,
+    "note": ""
   }
 ]
