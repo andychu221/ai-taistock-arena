@@ -1197,5 +1197,16 @@
     "shares": 50,
     "price": 2910,
     "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 10,
+    "date": "2026-08-24",
+    "action": "sell",
+    "ticker": "3017",
+    "name": "奇鋐",
+    "shares": 60,
+    "price": 2865,
+    "note": ""
   }
 ]
