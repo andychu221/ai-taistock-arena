@@ -973,7 +973,7 @@
     "date": "2026-08-10",
     "action": "sell",
     "ticker": "6515",
-    "name": "",
+    "name": "穎崴",
     "shares": 25,
     "price": 6980,
     "note": ""
@@ -1284,6 +1284,72 @@
     "name": "嘉澤",
     "shares": 90,
     "price": 1615,
+    "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 11,
+    "date": "2026-08-31",
+    "action": "sell",
+    "ticker": "3665",
+    "name": "貿聯-KY",
+    "shares": 90,
+    "price": 2230,
+    "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 11,
+    "date": "2026-08-31",
+    "action": "buy",
+    "ticker": "2311",
+    "name": "光寶科",
+    "shares": 640,
+    "price": 311,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 11,
+    "date": "2026-08-31",
+    "action": "buy",
+    "ticker": "6223",
+    "name": "旺矽",
+    "shares": 30,
+    "price": 4930,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 11,
+    "date": "2026-08-31",
+    "action": "sell",
+    "ticker": "2382",
+    "name": "廣達",
+    "shares": 450,
+    "price": 330,
+    "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 11,
+    "date": "2026-08-31",
+    "action": "sell",
+    "ticker": "3037",
+    "name": "欣興",
+    "shares": 90,
+    "price": 970,
+    "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 11,
+    "date": "2026-08-31",
+    "action": "buy",
+    "ticker": "3711",
+    "name": "日月光",
+    "shares": 140,
+    "price": 600,
     "note": ""
   }
 ]
