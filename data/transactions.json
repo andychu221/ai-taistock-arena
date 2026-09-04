@@ -963,8 +963,8 @@
     "action": "buy",
     "ticker": "6669",
     "name": "緯穎",
-    "shares": 30,
-    "price": 6215,
+    "shares": 90,
+    "price": 2000,
     "note": ""
   },
   {
@@ -1227,8 +1227,8 @@
     "action": "sell",
     "ticker": "6669",
     "name": "緯穎",
-    "shares": 30,
-    "price": 6300,
+    "shares": 90,
+    "price": 2112,
     "note": ""
   },
   {
