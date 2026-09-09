@@ -1373,5 +1373,16 @@
     "shares": 12,
     "price": 6000,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 12,
+    "date": "2026-09-07",
+    "action": "buy",
+    "ticker": "3711",
+    "name": "日月光",
+    "shares": 150,
+    "price": 600,
+    "note": ""
   }
 ]
