@@ -1362,5 +1362,16 @@
     "shares": 380,
     "price": 521,
     "note": ""
+  },
+  {
+    "ai": "claude",
+    "week": 12,
+    "date": "2026-09-07",
+    "action": "sell",
+    "ticker": "3443",
+    "name": "創意",
+    "shares": 12,
+    "price": 6000,
+    "note": ""
   }
 ]
