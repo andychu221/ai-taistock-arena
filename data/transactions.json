@@ -1359,7 +1359,7 @@
     "action": "sell",
     "ticker": "2408",
     "name": "南亞科",
-    "shares": 380,
+    "shares": 190,
     "price": 521,
     "note": ""
   },
@@ -1383,6 +1383,28 @@
     "name": "日月光",
     "shares": 150,
     "price": 600,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 12,
+    "date": "2026-09-07",
+    "action": "sell",
+    "ticker": "2345",
+    "name": "智邦",
+    "shares": 65,
+    "price": 2120,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 12,
+    "date": "2026-09-07",
+    "action": "buy",
+    "ticker": "3017",
+    "name": "奇鋐",
+    "shares": 42,
+    "price": 3505,
     "note": ""
   }
 ]
