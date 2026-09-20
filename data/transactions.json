@@ -1406,5 +1406,104 @@
     "shares": 42,
     "price": 3505,
     "note": ""
-  }
+  },
+  {
+    "ai": "chatgpt",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "sell",
+    "ticker": "2059",
+    "name": "川湖",
+    "shares": 10,
+    "price": 11900,
+    "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "sell",
+    "ticker": "2301",
+    "name": "光寶科",
+    "shares": 640,
+    "price": 278,
+    "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "sell",
+    "ticker": "3081",
+    "name": "聯亞",
+    "shares": 50,
+    "price": 2725,
+    "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "buy",
+    "ticker": "2454",
+    "name": "聯發科",
+    "shares": 44,
+    "price": 4480,
+    "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "buy",
+    "ticker": "2449",
+    "name": "京元電",
+    "shares": 775,
+    "price":258 ,
+    "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "buy",
+    "ticker": "6510",
+    "name": "精測",
+    "shares": 44,
+    "price": 3400,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "sell",
+    "ticker": "2308",
+    "name": "台達電",
+    "shares": 110,
+    "price": 1600,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "sell",
+    "ticker": "3533",
+    "name": "嘉澤",
+    "shares": 90,
+    "price": 1580,
+    "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 13,
+    "date": "2026-09-14",
+    "action": "buy",
+    "ticker": "3653",
+    "name": "健策",
+    "shares": 25,
+    "price": 5685,
+    "note": ""
+  },
 ]
