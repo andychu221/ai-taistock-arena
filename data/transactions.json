@@ -1459,7 +1459,7 @@
     "ticker": "2449",
     "name": "京元電",
     "shares": 775,
-    "price":258 ,
+    "price": 258,
     "note": ""
   },
   {
@@ -1504,6 +1504,17 @@
     "name": "健策",
     "shares": 25,
     "price": 5685,
+    "note": ""
+  },
+  {
+    "ai": "chatgpt",
+    "week": 14,
+    "date": "2026-09-21",
+    "action": "sell",
+    "ticker": "3653",
+    "name": "健策",
+    "shares": 35,
+    "price": 5800,
     "note": ""
   }
 ]
