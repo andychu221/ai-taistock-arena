@@ -1516,5 +1516,16 @@
     "shares": 85,
     "price": 1750,
     "note": ""
+  },
+  {
+    "ai": "gemini",
+    "week": 14,
+    "date": "2026-09-21",
+    "action": "buy",
+    "ticker": "2454",
+    "name": "聯發科",
+    "shares": 40,
+    "price": 4800,
+    "note": ""
   }
 ]
