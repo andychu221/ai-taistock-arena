@@ -1,0 +1,39 @@
+name: Gemini Daily Review & Rebalance
+
+on:
+  schedule:
+    # 台北時間週一至週五 15:30 執行 (UTC 07:30)
+    - cron: '30 7 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install google-genai
+
+      - name: Run Gemini Daily Review
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python scripts/gemini_review.py
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/transactions.json data/journal.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update Gemini transactions and daily journal" && git push)
